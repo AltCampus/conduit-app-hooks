@@ -1,0 +1,490 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Anek Tamil', sans-serif;
+}
+
+/* Common Styles */
+
+.container {
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+a:-webkit-any-link {
+  text-decoration: none;
+}
+.flex {
+  display: flex;
+}
+.space-btw {
+  justify-content: space-between;
+}
+.align-center {
+  align-items: center;
+}
+.gap-2 {
+  gap: 2rem;
+}
+.gap-1 {
+  gap: 1rem;
+}
+.gap-half {
+  gap: 0.5rem;
+}
+.padd-1 {
+  padding: 1rem 0;
+}
+.active {
+  color: red;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+
+/* Loading */
+
+.loading {
+  font-size: 2rem;
+  margin: 3rem;
+  text-align: center;
+}
+
+/* Header */
+
+header {
+  padding: 1rem;
+}
+
+.logo {
+  color: rgb(89, 172, 89);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.nav-link {
+  /* font-size: 1rem;
+  color: rgb(192, 192, 192); */
+}
+.nav-link:hover {
+  color: gray;
+}
+
+/* Not Found */
+
+.not-found-holder {
+  min-height: 50vh;
+}
+.not-found {
+  text-align: center;
+  font-size: 3rem;
+  color: rgb(218, 95, 73);
+}
+
+/* Hero */
+
+#hero-section {
+  background-color: rgb(89, 172, 89);
+  padding: 2rem;
+}
+.hero-heading,
+.hero-subheading {
+  font-size: 3.5rem;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+}
+.hero-subheading {
+  font-size: 2rem;
+  font-weight: 300;
+  margin-top: 2rem;
+}
+
+/* Sign in */
+
+.sign-in-form {
+  width: 40%;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+.signin-input {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid lightgray;
+  background-color: transparent;
+  border-radius: 5px;
+  margin-top: 1rem;
+  color: rgb(85, 84, 84);
+}
+.signin-input::placeholder {
+  color: rgb(161, 161, 161);
+}
+.signin-input:focus {
+  outline: none;
+  border: 1px solid rgb(29, 146, 241);
+}
+.signin-submit {
+  display: block;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  border: none;
+  background-color: rgb(89, 172, 89);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  float: right;
+}
+.signin-submit:hover {
+  background-color: rgb(121, 199, 121);
+}
+.signin-heading {
+  text-align: center;
+  font-size: 3rem;
+  color: black;
+}
+.need-account {
+  text-align: center;
+  color: rgb(89, 172, 89);
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  display: block;
+}
+.err-msg {
+  color: red;
+  margin: 5px;
+}
+
+/* Main */
+
+.global-feed {
+  cursor: pointer;
+}
+.feed-toggle::after {
+  content: '';
+  display: block;
+  width: 100%;
+  border-bottom: 2px solid rgb(231, 230, 230);
+  margin-top: 0.6rem;
+}
+.row {
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+.feed {
+  width: 74%;
+  padding: 0 1rem;
+}
+.tags {
+  width: 25%;
+  padding: 0.5rem;
+  background-color: rgb(242, 242, 242);
+  border-radius: 3px;
+  height: fit-content;
+  padding: 0.8rem 0.4rem;
+}
+.tags-heading {
+  font-size: 1.1rem;
+}
+.tag {
+  background-color: rgb(121, 120, 120);
+  padding: 10px;
+  border-radius: 20px;
+  width: fit-content;
+  color: white;
+  cursor: pointer;
+}
+.tag:hover {
+  background-color: rgb(88, 87, 87);
+}
+.active-tag {
+  background-color: rgb(88, 87, 87);
+  text-decoration: underline;
+}
+.tag-list-holder {
+  margin-top: 1rem;
+  height: fit-content;
+}
+.pageNo {
+  padding: 10px;
+  color: green;
+  background-color: transparent;
+  border: 1px solid lightgray;
+  cursor: pointer;
+}
+.activePageNo {
+  padding: 10px;
+  border: 1px solid lightgray;
+  background-color: green;
+  color: white;
+  cursor: pointer;
+}
+.noOfPage:hover {
+  background-color: green;
+  color: white;
+}
+/* Article */
+
+.author-img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+.likes-count-holder {
+  padding: 0px 10px;
+  border-radius: 5px;
+  border: 1px solid rgb(99, 173, 99);
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+}
+.likes-count-holder:hover {
+  background-color: rgb(99, 173, 99);
+}
+
+.likes-count-holder:hover .likes,
+.heart {
+  color: white;
+}
+.likes-count-holder:hover .heart {
+  color: white;
+}
+.likes,
+.heart {
+  font-size: 0.8rem;
+  color: rgb(99, 173, 99);
+}
+.author-name {
+  color: rgb(99, 173, 99);
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+.date {
+  color: rgb(143, 142, 142);
+}
+.article-title {
+  font-size: 1.7rem;
+  color: rgb(105, 105, 105);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  width: fit-content;
+}
+.article-description {
+  font-size: 1rem;
+  color: rgb(105, 105, 105);
+  cursor: pointer;
+  width: fit-content;
+}
+.read-more {
+  border: none;
+  background-color: transparent;
+  color: rgb(192, 192, 192);
+  cursor: pointer;
+}
+.test {
+  background-color: rgb(247, 247, 247);
+  border: 1px solid rgb(201, 201, 201);
+  padding: 5px 10px;
+  border-radius: 10px;
+  color: gray;
+  cursor: pointer;
+}
+.single-article::after {
+  content: '';
+  display: block;
+  width: 100%;
+  border-bottom: 2px solid rgb(236, 236, 236);
+  margin-top: 0.6rem;
+  margin-bottom: 1rem;
+}
+.feed-list-holder {
+  margin-top: 1.5rem;
+}
+
+/* Single Article */
+
+#single-art-hero {
+  padding: 2rem;
+  background-color: rgb(36, 35, 36);
+}
+
+#hero-section {
+  background-color: rgb(89, 172, 89);
+  padding: 2rem;
+}
+.single-art-heading,
+.single-art-subheading {
+  text-align: start;
+  font-size: 2.5rem;
+  font-weight: 400;
+}
+.single-art-subheading {
+  text-align: start;
+  font-size: 2rem;
+  font-weight: 400;
+}
+.author-single-art {
+  color: white;
+}
+.single-art-description {
+  font-size: 1.3rem;
+  color: rgb(70, 70, 70);
+  margin-top: 2rem;
+}
+.single-art-tag {
+  color: lightgray;
+  border-radius: 30px;
+  border: 1px solid lightgray;
+  padding: 3px 10px;
+  width: fit-content;
+  margin: 3rem 0;
+}
+.single-art-holder::after {
+  content: '';
+  display: block;
+  /* width: 100%; */
+  border-bottom: 2px solid rgb(221, 221, 221);
+  margin-top: 0.6rem;
+}
+.activeToggle {
+  color: green;
+}

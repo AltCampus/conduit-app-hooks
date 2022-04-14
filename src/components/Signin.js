@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import validate from '../utils/validate';
 class Signin extends React.Component {
   constructor(props) {
     super(props);
@@ -15,30 +16,14 @@ class Signin extends React.Component {
 
   handleChange = (event) => {
     let { name, value } = event.target;
-    this.setState({ [name]: value });
+    let errors = { ...this.state.errors };
+    validate(errors, name, value);
+    this.setState({ [name]: value, errors });
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
     let { email, password, errors } = this.state;
-
-    if (!email) {
-      errors.email = "Email can't be empty";
-    } else if (!this.validateEmail(email)) {
-      errors.email = 'Enter a Valid Email';
-    } else {
-      errors.email = '';
-    }
-
-    if (!password) {
-      errors.password = "Password can't be empty";
-    } else if (password.length < 6) {
-      errors.password = 'Password Should be atleast 6 character';
-    } else if (!this.validatePassword(password)) {
-      errors.password = 'Password should contain number and alphabet';
-    } else {
-      errors.password = '';
-    }
     this.setState({ email, password, errors });
   };
 
@@ -52,8 +37,7 @@ class Signin extends React.Component {
     return password.match(numeric_alpha);
   };
   render() {
-    console.log(this.state.errors.email);
-    console.log(this.state.errors.password);
+    let errors = this.state;
     return (
       <div className='signin'>
         <form
@@ -86,7 +70,12 @@ class Signin extends React.Component {
           <h2 className='err-msg'>
             {this.state.errors.password ? this.state.errors.password : ''}
           </h2>
-          <input type='submit' value='Sign in' className='signin-submit' />
+          <input
+            type='submit'
+            value='Sign in'
+            disabled
+            className='signin-submit'
+          />
         </form>
       </div>
     );

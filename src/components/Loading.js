@@ -1,9 +1,11 @@
-import React from 'react';
-
-class Loading extends React.Component {
-  render() {
-    return <h1 className='loading'>Loading...</h1>;
-  }
+function Loading() {
+  return (
+    <div className='bouncing-loader'>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  );
 }
 
 export default Loading;

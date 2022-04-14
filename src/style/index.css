@@ -171,21 +171,40 @@ a:-webkit-any-link {
 .padd-1 {
   padding: 1rem 0;
 }
-.active {
-  color: red;
-}
+
 .wrap {
   flex-wrap: wrap;
 }
 
 /* Loading */
-
-.loading {
-  font-size: 2rem;
-  margin: 3rem;
-  text-align: center;
+@keyframes bouncing-loader {
+  to {
+    opacity: 0.1;
+    transform: translate3d(0, -16px, 0);
+  }
 }
 
+.bouncing-loader {
+  display: flex;
+  justify-content: center;
+}
+
+.bouncing-loader > div {
+  width: 16px;
+  height: 16px;
+  margin: 3rem 0.2rem;
+  background: #8385aa;
+  border-radius: 50%;
+  animation: bouncing-loader 0.6s infinite alternate;
+}
+
+.bouncing-loader > div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.bouncing-loader > div:nth-child(3) {
+  animation-delay: 0.4s;
+}
 /* Header */
 
 header {
@@ -195,14 +214,16 @@ header {
 .logo {
   color: rgb(89, 172, 89);
   font-size: 1.5rem;
-  font-weight: 700;
 }
 .nav-link {
-  /* font-size: 1rem;
-  color: rgb(192, 192, 192); */
+  font-size: 1rem;
+  color: rgb(192, 192, 192);
 }
 .nav-link:hover {
   color: gray;
+}
+.active {
+  color: grey;
 }
 
 /* Not Found */
@@ -315,7 +336,7 @@ header {
 .tags {
   width: 25%;
   padding: 0.5rem;
-  background-color: rgb(242, 242, 242);
+  background-color: rgb(223, 242, 247);
   border-radius: 3px;
   height: fit-content;
   padding: 0.8rem 0.4rem;
@@ -324,18 +345,21 @@ header {
   font-size: 1.1rem;
 }
 .tag {
-  background-color: rgb(121, 120, 120);
+  background-color: rgb(185, 221, 227);
   padding: 10px;
   border-radius: 20px;
   width: fit-content;
-  color: white;
+  color: rgb(45, 72, 96);
   cursor: pointer;
+  font-weight: 500;
+  border: 2px solid rgb(185, 221, 227);
 }
 .tag:hover {
-  background-color: rgb(88, 87, 87);
+  /* background-color: rgb(111, 156, 190); */
+  border: 2px solid rgb(95, 95, 95);
 }
 .active-tag {
-  background-color: rgb(88, 87, 87);
+  border: 1px solid rgb(82, 82, 82);
   text-decoration: underline;
 }
 .tag-list-holder {

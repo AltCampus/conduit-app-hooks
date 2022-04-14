@@ -9,7 +9,7 @@ import SingleArticle from './SingleArticle';
 class App extends React.Component {
   render() {
     return (
-      <Router>
+      <React.StrictMode>
         <Header />
         <Switch>
           <Route path='/' exact>
@@ -26,7 +26,7 @@ class App extends React.Component {
             <NotFound />
           </Route>
         </Switch>
-      </Router>
+      </React.StrictMode>
     );
   }
 }

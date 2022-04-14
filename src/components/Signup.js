@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import validate from '../utils/validate';
 class Signup extends React.Component {
   constructor(props) {
     super(props);
@@ -17,52 +18,58 @@ class Signup extends React.Component {
 
   handleChange = (event) => {
     let { name, value } = event.target;
-    this.setState({ [name]: value });
+    let errors = { ...this.state.errors };
+
+    validate(errors, name, value);
+    // switch (name) {
+    //   case 'email':
+    //     let emailError = '';
+    //     if (value.indexOf('@') === -1) {
+    //       emailError = 'Email should contain @';
+    //     }
+    //     if (!value) {
+    //       emailError = 'Email cant be empty';
+    //     }
+    //     errors.email = emailError;
+    //     break;
+    //   case 'username':
+    //     let usernameError = '';
+    //     if (value.length < 6) {
+    //       usernameError = 'username should contain 6 charachter';
+    //     }
+    //     if (!value) {
+    //       usernameError = 'Email cant be empty';
+    //     }
+    //     errors.username = usernameError;
+    //     break;
+    //   case 'password':
+    //     let passwordError = '';
+    //     var numeric_alpha = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
+
+    //     if (!value) {
+    //       passwordError = "Password can't be empty";
+    //     } else if (!numeric_alpha.test(value)) {
+    //       passwordError = 'Password should contain one alphabet and one number';
+    //     } else if (value.length < 7) {
+    //       passwordError = 'Password should contain atleast 6 character';
+    //     }
+    //     errors.password = passwordError;
+    //     break;
+    //   default:
+    //     break;
+    // }
+
+    this.setState({ [name]: value, errors });
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
     let { username, email, password, errors } = this.state;
-
-    if (!username) {
-      errors.username = `Username can't be empty`;
-    } else if (username.length < 7) {
-      errors.username = 'Username should be more than 6 charachter';
-    } else {
-      errors.username = '';
-    }
-
-    if (!email) {
-      errors.email = "Email can't be empty";
-    } else if (!this.validateEmail(email)) {
-      errors.email = 'Enter a Valid Email';
-    } else {
-      errors.email = '';
-    }
-
-    if (!password) {
-      errors.password = "Password can't be empty";
-    } else if (password.length < 6) {
-      errors.password = 'Password Should be atleast 6 character';
-    } else if (!this.validatePassword(password)) {
-      errors.password = 'Password should contain number and alphabet';
-    } else {
-      errors.password = '';
-    }
-    this.setState({ email, password, errors });
-  };
-
-  validateEmail = (email) => {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
-  validatePassword = (password) => {
-    var numeric_alpha = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
-    return password.match(numeric_alpha);
+    this.setState({ username, email, password, errors });
   };
 
   render() {
+    let errors = this.state;
     return (
       <div className='signin'>
         <form
@@ -107,7 +114,12 @@ class Signup extends React.Component {
           <h2 className='err-msg'>
             {this.state.errors.password ? this.state.errors.password : ''}
           </h2>
-          <input type='submit' value='Sign up' className='signin-submit' />
+          <input
+            type='submit'
+            value='Sign up'
+            disabled={errors.username || errors.email || errors.password}
+            className='signin-submit'
+          />
         </form>
       </div>
     );

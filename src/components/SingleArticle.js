@@ -1,4 +1,5 @@
 import React from 'react';
+import { singleArticleURL } from '../utils/constant';
 import Loading from './Loading';
 import Error from './Error';
 
@@ -13,18 +14,25 @@ class SingleArticle extends React.Component {
     this.getArticle(this.props.match.params.slug);
   }
 
+  getArticle = (slug) => {
+    fetch(singleArticleURL + slug)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({
+          article: data.article,
+        });
+      })
+      .catch((err) => <Error error={err} />);
+  };
+
   updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();
-  };
-
-  getArticle = (slug) => {
-    fetch(`https://mighty-oasis-08080.herokuapp.com/api/articles/${slug}`)
-      .then((res, err) => {
-        if (err) return <Error error={err} />;
-        return res.json();
-      })
-      .then((article) => this.setState({ article: article.article }));
   };
 
   render() {

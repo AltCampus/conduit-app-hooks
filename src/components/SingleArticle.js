@@ -8,6 +8,7 @@ class SingleArticle extends React.Component {
     super(props);
     this.state = {
       article: '',
+      error: '',
     };
   }
   componentDidMount() {
@@ -25,9 +26,10 @@ class SingleArticle extends React.Component {
       .then((data) => {
         this.setState({
           article: data.article,
+          error: '',
         });
       })
-      .catch((err) => <Error error={err} />);
+      .catch((err) => this.setState({ error: err }));
   };
 
   updatedDate = (val) => {
@@ -36,8 +38,9 @@ class SingleArticle extends React.Component {
   };
 
   render() {
-    let { article } = this.state;
+    let { article, error } = this.state;
     if (!article) return <Loading />;
+    if (error) return <Error error={error} />;
     return (
       <div className=''>
         <section id='single-art-hero'>

@@ -1,12 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import validate from '../utils/validate';
+import { Root_url } from '../utils/constant';
+import Error from './Error';
 class Signin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
       password: '',
+      error: '',
       errors: {
         email: '',
         password: '',
@@ -21,10 +24,34 @@ class Signin extends React.Component {
     this.setState({ [name]: value, errors });
   };
 
+  loginInUser = (email, password) => {
+    fetch(Root_url + 'users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user: { email, password },
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ email: '', password: '' });
+        localStorage.setItem('token', JSON.stringify(data.user.token));
+        this.props.history.push('/');
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
-    let { email, password, errors } = this.state;
-    this.setState({ email, password, errors });
+    let { email, password } = this.state;
+    if (email && password) {
+      this.loginInUser(email, password);
+    }
   };
 
   validateEmail = (email) => {
@@ -37,7 +64,9 @@ class Signin extends React.Component {
     return password.match(numeric_alpha);
   };
   render() {
-    let errors = this.state;
+    let { error } = this.state;
+    if (error) return <Error error={error} />;
+
     return (
       <div className='signin'>
         <form
@@ -70,16 +99,11 @@ class Signin extends React.Component {
           <h2 className='err-msg'>
             {this.state.errors.password ? this.state.errors.password : ''}
           </h2>
-          <input
-            type='submit'
-            value='Sign in'
-            disabled
-            className='signin-submit'
-          />
+          <input type='submit' value='Sign in' className='signin-submit' />
         </form>
       </div>
     );
   }
 }
 
-export default Signin;
+export default withRouter(Signin);

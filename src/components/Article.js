@@ -1,37 +1,8 @@
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-// import { singleArticleURL } from '../utils/constant';
-// import Error from './Error';
-// import Loading from './Loading';
+
 class Article extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     article: null,
-  //   };
-  // }
-
-  // componentDidMount() {
-  //   this.getArticles();
-  // }
-
-  // getArticles = () => {
-  //   fetch(singleArticleURL + 'slug')
-  //     .then((res) => {
-  //       if (!res.ok) {
-  //         throw new Error(res.statusText);
-  //       }
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       this.setState({
-  //         article: data.article,
-  //       });
-  //     })
-  //     .catch((err) => <Error error={err} />);
-  // };
-
   updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();

@@ -143,7 +143,7 @@ body {
 /* Common Styles */
 
 .container {
-  max-width: 80%;
+  max-width: 90%;
   margin: 0 auto;
 }
 
@@ -174,6 +174,9 @@ a:-webkit-any-link {
 
 .wrap {
   flex-wrap: wrap;
+}
+.pointer {
+  cursor: pointer;
 }
 
 /* Loading */
@@ -330,16 +333,15 @@ header {
   padding: 0 1rem;
 }
 .feed {
-  width: 74%;
+  width: 69%;
   padding: 0 1rem;
 }
 .tags {
-  width: 25%;
-  padding: 0.5rem;
+  width: 30%;
   background-color: rgb(223, 242, 247);
-  border-radius: 3px;
+  border-radius: 5px;
   height: fit-content;
-  padding: 0.8rem 0.4rem;
+  padding: 0.3rem 0.2rem;
 }
 .tags-heading {
   font-size: 1.1rem;
@@ -347,7 +349,7 @@ header {
 .tag {
   background-color: rgb(185, 221, 227);
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 15px;
   width: fit-content;
   color: rgb(45, 72, 96);
   cursor: pointer;
@@ -355,11 +357,10 @@ header {
   border: 2px solid rgb(185, 221, 227);
 }
 .tag:hover {
-  /* background-color: rgb(111, 156, 190); */
   border: 2px solid rgb(95, 95, 95);
 }
 .active-tag {
-  border: 1px solid rgb(82, 82, 82);
+  border: 2px solid rgb(95, 95, 95);
   text-decoration: underline;
 }
 .tag-list-holder {
@@ -383,6 +384,11 @@ header {
 .noOfPage:hover {
   background-color: green;
   color: white;
+}
+
+.pagination-holder {
+  margin-top: 2rem;
+  flex-wrap: wrap;
 }
 /* Article */
 
@@ -557,4 +563,78 @@ header {
   border-radius: 10px;
   display: block;
   float: right;
+}
+
+/* Setting */
+
+.setting-heading {
+  font-size: 2.5rem;
+  color: rgb(70, 69, 69);
+  font-weight: 500;
+  text-align: center;
+}
+.setting {
+  width: 50%;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+.settings-from:after {
+  content: '';
+  border-top: 1px solid black;
+  width: 100%;
+}
+.logout-btn {
+  padding: 0.5rem 2rem;
+  background-color: transparent;
+  border: 1px solid tomato;
+  color: tomato;
+  font-size: 1rem;
+  display: block;
+  margin-top: 5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* user profile */
+
+#user-profile-hero-section {
+  padding: 1rem;
+  background-color: rgb(244, 244, 244);
+  padding-bottom: 4rem;
+}
+.user-profile-image {
+  width: 100px;
+  height: 100px;
+  border: 1px solid gray;
+  border-radius: 50%;
+  display: block;
+  margin: 1rem auto;
+}
+.user-profile-bio {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+.user-profile-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+.follow-user {
+  background-color: rgb(196, 195, 196);
+  padding: 10px;
+  color: rgb(95, 95, 94);
+  font-weight: 500;
+  border-radius: 2px;
+  font-size: 0.9rem;
+  border: 1px solid gray;
+  margin-right: 2rem;
+  float: right;
+  cursor: pointer;
+}
+.ion-android-contact,
+.ion-compose,
+.ion-ios-gear {
+  margin-right: 5px;
+  font-size: 1.1rem;
 }

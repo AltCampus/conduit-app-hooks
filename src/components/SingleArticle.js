@@ -2,6 +2,7 @@ import React from 'react';
 import { singleArticleURL } from '../utils/constant';
 import Loading from './Loading';
 import Error from './Error';
+import { Link } from 'react-router-dom';
 
 class SingleArticle extends React.Component {
   constructor(props) {
@@ -53,9 +54,11 @@ class SingleArticle extends React.Component {
                 alt={article.author.username}
               />
               <div className=''>
-                <h3 className='author-name author-single-art'>
-                  {article.author.username}
-                </h3>
+                <Link to={`/profiles/${article.author.username}`}>
+                  <h3 className='author-name author-single-art'>
+                    {article.author.username}
+                  </h3>
+                </Link>
                 <span className='date'>
                   {this.updatedDate(article.updatedAt)}
                 </span>

@@ -1,15 +1,14 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import validate from '../utils/validate';
-import { Root_url } from '../utils/constant';
-import Error from './Error';
+import { loginURL } from '../utils/constant';
+
 class Signin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
       password: '',
-      error: '',
       errors: {
         email: '',
         password: '',
@@ -25,7 +24,7 @@ class Signin extends React.Component {
   };
 
   loginInUser = (email, password) => {
-    fetch(Root_url + 'users/login', {
+    fetch(loginURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -34,16 +33,27 @@ class Signin extends React.Component {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error(res.statusText);
+          return res.json().then(({ errors }) => {
+            return Promise.reject(errors);
+          });
         }
         return res.json();
       })
-      .then((data) => {
-        this.setState({ email: '', password: '' });
-        localStorage.setItem('token', JSON.stringify(data.user.token));
+      .then(({ user }) => {
+        this.props.updateUser(user);
         this.props.history.push('/');
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((errors) => {
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            errors: {
+              ...prevState.errors,
+              email: 'Email or Password is incorrect',
+            },
+          };
+        });
+      });
   };
 
   handleSubmit = (event) => {
@@ -64,9 +74,6 @@ class Signin extends React.Component {
     return password.match(numeric_alpha);
   };
   render() {
-    let { error } = this.state;
-    if (error) return <Error error={error} />;
-
     return (
       <div className='signin'>
         <form

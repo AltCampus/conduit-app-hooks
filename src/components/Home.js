@@ -35,7 +35,7 @@ class Home extends React.Component {
   };
 
   componentDidMount() {
-    let isLoggedIn = this.props.token;
+    let isLoggedIn = this.props.isUserLoggedIn;
     if (isLoggedIn) {
       this.setState({ feedSelected: 'myFeed' }, this.myFeed());
     } else {
@@ -47,13 +47,18 @@ class Home extends React.Component {
     if (prevState.activeTag !== this.state.activeTag) {
       this.getArticles();
     }
+    if (
+      !this.props.isUserLoggedIn &&
+      _prevProps.isUserLoggedIn !== this.props.isUserLoggedIn
+    ) {
+      this.getArticles();
+    }
   }
 
   getArticles = () => {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
     let tag = this.state.activeTag;
-    let token = JSON.parse(localStorage.getItem('token'));
     fetch(
       articlesURL +
         `/?offset=${offset}&limit=${limit}` +
@@ -61,7 +66,6 @@ class Home extends React.Component {
       {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-type': 'application/json',
         },
       }
@@ -85,11 +89,11 @@ class Home extends React.Component {
   myFeed = () => {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
-    let token = JSON.parse(localStorage.getItem('token'));
+    let token = this.props.user.token;
     fetch(feedURL + `/?offset=${offset}&limit=${limit}`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Token ${token}`,
         'Content-type': 'application/json',
       },
     })
@@ -124,7 +128,7 @@ class Home extends React.Component {
       activeTag,
       error,
     } = this.state;
-    let token = this.props.token;
+
     if (error) return <Error error={error} />;
     return (
       <main>
@@ -138,18 +142,18 @@ class Home extends React.Component {
                   emptyTab={this.emptyTab}
                   changeFeedSelected={this.changeFeedSelected}
                   feedSelected={this.state.feedSelected}
-                  token={token}
+                  isUserLoggedIn={this.props.isUserLoggedIn}
                 />
-                <Posts articles={articles || []} token={token} />
+                <Posts articles={articles || []} />
+                <Pagination
+                  articlesCount={articlesCount}
+                  articlesPerPage={articlesPerPage}
+                  activePageIndex={activePageIndex}
+                  updateCurrentPageIndex={this.updateCurrentPageIndex}
+                />
               </div>
-              <Sidebar addTab={this.addTab} />
+              <Sidebar addTab={this.addTab} activeTag={activeTag} />
             </div>
-            <Pagination
-              articlesCount={articlesCount}
-              articlesPerPage={articlesPerPage}
-              activePageIndex={activePageIndex}
-              updateCurrentPageIndex={this.updateCurrentPageIndex}
-            />
           </div>
         </section>
       </main>

@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
 function FeedNav(props) {
-  let token = props.token;
+  let isUserLoggedIn = props.isUserLoggedIn;
   return (
     <div className='feed-toggle'>
       <ul className='flex gap-1'>
-        {!token ? (
+        {!isUserLoggedIn ? (
           ''
         ) : (
           <li key={1} onClick={props.emptyTab}>
@@ -18,7 +18,7 @@ function FeedNav(props) {
                   : 'global-feed'
               }
             >
-              #YourFeed
+              YourFeed
             </Link>
           </li>
         )}
@@ -32,7 +32,7 @@ function FeedNav(props) {
                 : 'global-feed'
             }
           >
-            #GlobalFeed
+            GlobalFeed
           </Link>
         </li>
         {props.activeTag && (

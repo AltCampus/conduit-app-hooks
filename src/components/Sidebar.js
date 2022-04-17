@@ -7,14 +7,15 @@ class Sidebar extends React.Component {
     super(props);
     this.state = {
       tags: null,
+      error: '',
     };
   }
 
   componentDidMount() {
-    this.getArticles();
+    this.getTags();
   }
 
-  getArticles = () => {
+  getTags = () => {
     fetch(tagsURL)
       .then((res) => {
         if (!res.ok) {
@@ -25,21 +26,23 @@ class Sidebar extends React.Component {
       .then(({ tags }) => {
         this.setState({ tags });
       })
-      .catch((err) => <Error error={err} />);
+      .catch((error) => this.setState({ error }));
   };
   render() {
-    let allTags = this.state.tags;
-    if (!allTags) return <Loading />;
+    let { tags, error } = this.state;
+    if (error) return <Error error={error} />;
     return (
       <aside className='tags'>
         <h3 className='tags-heading'>Popular Tags</h3>
         <ul className='tag-list-holder flex gap-half wrap'>
-          {allTags.length ? (
-            allTags.map((tag) => {
+          {tags ? (
+            tags.map((tag) => {
               return (
                 <li
                   key={tag}
-                  className={'tag'}
+                  className={
+                    this.props.activeTag === tag ? 'tag active-tag' : 'tag'
+                  }
                   onClick={() => this.props.addTab(tag)}
                 >
                   {tag}

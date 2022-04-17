@@ -20,7 +20,9 @@ class Article extends React.Component {
               alt={article.author.username}
             />
             <div className=''>
-              <h3 className='author-name'>{article.author.username}</h3>
+              <Link to={`/profiles/${article.author.username}`}>
+                <h3 className='author-name'>{article.author.username}</h3>
+              </Link>
               <span className='date'>
                 {this.updatedDate(article.updatedAt)}
               </span>

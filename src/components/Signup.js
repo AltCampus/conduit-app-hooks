@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import validate from '../utils/validate';
-import { Root_url } from '../utils/constant';
-import Error from './Error';
+import { signUpURL } from '../utils/constant';
 class Signup extends React.Component {
   constructor(props) {
     super(props);
@@ -10,7 +9,6 @@ class Signup extends React.Component {
       username: '',
       email: '',
       password: '',
-      error: '',
       errors: {
         username: '',
         email: '',
@@ -28,7 +26,7 @@ class Signup extends React.Component {
   };
 
   signInUser = (username, email, password) => {
-    fetch(Root_url + 'users', {
+    fetch(signUpURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -37,16 +35,17 @@ class Signup extends React.Component {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error(res.statusText);
+          return res.json().then(({ errors }) => {
+            return Promise.reject(errors);
+          });
         }
         return res.json();
       })
-      .then((data) => {
-        this.setState({ username: '', email: '', password: '' });
-        localStorage.setItem('token', JSON.stringify(data.user.token));
+      .then(({ user }) => {
+        this.props.updateUser(user);
         this.props.history.push('/');
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((errors) => this.setState({ errors }));
   };
 
   handleSubmit = (event) => {
@@ -58,8 +57,6 @@ class Signup extends React.Component {
   };
 
   render() {
-    let { error } = this.state;
-    if (error) return <Error error={error} />;
     return (
       <div className='signin'>
         <form

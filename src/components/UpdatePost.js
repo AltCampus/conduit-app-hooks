@@ -1,14 +1,15 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { articlesURL } from '../utils/constant';
+import { articlesURL, singleArticleURL } from '../utils/constant';
 import Error from './Error';
-class NewPost extends React.Component {
+
+class UpdatePost extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       title: '',
       body: '',
-      tagList: '',
+      tagList: [],
       description: '',
       error: '',
       errors: {
@@ -19,6 +20,35 @@ class NewPost extends React.Component {
       },
     };
   }
+
+  componentDidMount() {
+    this.getArticle(this.props.match.params.slug);
+    this.allArticle(this.props);
+  }
+
+  allArticle = (article) => {
+    console.log(article);
+  };
+
+  getArticle = (slug) => {
+    fetch(singleArticleURL + slug)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(({ article }) => {
+        this.setState({
+          title: article.title,
+          body: article.body,
+          description: article.description,
+          tagList: article.tagList,
+          error: '',
+        });
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
 
   handleChange = (event) => {
     let { name, value } = event.target;
@@ -35,10 +65,11 @@ class NewPost extends React.Component {
     event.preventDefault();
     let { title, body, description, tagList, errors } = this.state;
     let token = this.props.user.token;
+    let slug = this.props.match.params.slug;
     if (title && body && description && tagList) {
       tagList = tagList.split(',').map((tag) => tag.trim());
-      fetch(articlesURL, {
-        method: 'POST',
+      fetch(singleArticleURL + slug, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           authorization: `Token ${token}`,
@@ -128,7 +159,7 @@ class NewPost extends React.Component {
           <h2 className='err-msg'>{errors.tagList ? errors.tagList : ''}</h2>
           <input
             type='submit'
-            value='Publish Article'
+            value='Update Article'
             className='publish-article pointer'
           />
         </form>
@@ -137,4 +168,4 @@ class NewPost extends React.Component {
   }
 }
 
-export default withRouter(NewPost);
+export default withRouter(UpdatePost);

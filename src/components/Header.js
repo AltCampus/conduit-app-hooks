@@ -48,7 +48,7 @@ function AuthHeader(props) {
       </li>
       <li>
         <NavLink
-          to='/profile'
+          to={`/profile/${props.user.username}`}
           className='nav-link flex align-center'
           activeclassname='active'
         >

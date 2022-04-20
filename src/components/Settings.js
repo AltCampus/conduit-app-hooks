@@ -39,6 +39,8 @@ class Settings extends React.Component {
         this.setState({
           email: profile.user.email,
           username: profile.user.username,
+          image: profile.user.image,
+          bio: profile.user.bio,
         });
       })
       .catch((error) => console.log(error));
@@ -49,7 +51,7 @@ class Settings extends React.Component {
     let { username, email, image, bio, password, errors } = this.state;
     let token = this.props.user.token;
 
-    if ((username, email, password)) {
+    if (!errors.username && !errors.email && !errors.password) {
       fetch(userVerifyURL, {
         method: 'PUT',
         body: JSON.stringify({
@@ -84,16 +86,16 @@ class Settings extends React.Component {
         })
         .catch((error) => console.log(error));
     } else {
-      if (!username) {
-        errors.username = "Can't be Empty";
-      }
-      if (!email) {
-        errors.email = "Can't be Empty";
-      }
-      if (!password) {
-        errors.password = "Can't be Empty";
-      }
-      this.setState({ errors });
+      //   if (!username) {
+      //     errors.username = "Can't be Empty";
+      //   }
+      //   if (!email) {
+      //     errors.email = "Can't be Empty";
+      //   }
+      //   if (!password) {
+      //     errors.password = "Can't be Empty";
+      //   }
+      //   this.setState({ errors });
     }
   };
 

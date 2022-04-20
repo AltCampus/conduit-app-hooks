@@ -10,8 +10,9 @@ import SingleArticle from './SingleArticle';
 import { localStorageKey, userVerifyURL } from '../utils/constant';
 import FullPageSppiner from './fullPageSpinner';
 import Settings from './Settings';
-import UserInfo from './UserInfo';
 import Profile from './Profile';
+import Error from './Error';
+import UpdatePost from './UpdatePost';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -19,6 +20,7 @@ class App extends React.Component {
       isUserLoggedIn: false,
       user: null,
       isVerifying: true,
+      error: '',
     };
   }
 
@@ -40,7 +42,7 @@ class App extends React.Component {
           });
         })
         .then(({ user }) => this.updateUser(user))
-        .catch((errors) => console.log(errors));
+        .catch((error) => this.setState({ error }));
     } else {
       this.setState({ isVerifying: false });
     }
@@ -53,17 +55,18 @@ class App extends React.Component {
 
   logoutUser = () => {
     this.setState({ isUserLoggedIn: false, user: null, isVerifying: false });
-    // localStorage.setItem(localStorageKey, '');
     localStorage.removeItem(localStorageKey);
     this.props.history.push('/');
   };
 
   render() {
+    if (this.state.error) {
+      return <Error error={this.state.error} />;
+    }
     if (this.state.isVerifying) {
       return <FullPageSppiner />;
     }
     let { isUserLoggedIn, user } = this.state;
-
     return (
       <>
         <React.StrictMode>
@@ -73,12 +76,15 @@ class App extends React.Component {
               isUserLoggedIn={isUserLoggedIn}
               user={user}
               logoutUser={this.logoutUser}
+              updateArticle={this.updateArticle}
+              article={this.state.article}
             />
           ) : (
             <UnAuthenticatedApp
               isUserLoggedIn={isUserLoggedIn}
               user={user}
               updateUser={this.updateUser}
+              article={this.state.article}
             />
           )}
         </React.StrictMode>
@@ -96,14 +102,21 @@ function AuthenticatedApp(props) {
       <Route path='/newPost'>
         <NewPost isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
       </Route>
-      <Route path='/profile' exaxt>
-        <UserInfo user={props.user} />
-      </Route>
       <Route path='/setting'>
         <Settings user={props.user} logoutUser={props.logoutUser} />
       </Route>
-      <Route path='/profiles/:username' component={Profile} exact />
-      <Route path='/article/:slug' component={SingleArticle} exact />
+      <Route path='/profile/:username' exact>
+        <Profile isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+      </Route>
+      <Route path='/article/edit/:slug'>
+        <UpdatePost isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+      </Route>
+      <Route path='/article/:slug'>
+        <SingleArticle
+          isUserLoggedIn={props.isUserLoggedIn}
+          user={props.user}
+        />
+      </Route>
       <Route path='*'>
         <NotFound />
       </Route>
@@ -123,8 +136,15 @@ function UnAuthenticatedApp(props) {
       <Route path='/register'>
         <Signup updateUser={props.updateUser} />
       </Route>
-      <Route path='/profiles/:username' component={Profile} exact />
-      <Route path='/article/:slug' component={SingleArticle} exact />
+      <Route path='/profile/:username'>
+        <Profile isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+      </Route>
+      <Route path='/article/:slug'>
+        <SingleArticle
+          isUserLoggedIn={props.isUserLoggedIn}
+          user={props.user}
+        />
+      </Route>
       <Route path='*'>
         <NotFound />
       </Route>

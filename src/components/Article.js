@@ -1,6 +1,6 @@
 import React from 'react';
-import { FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import Loading from './Loading';
 
 class Article extends React.Component {
   updatedDate = (val) => {
@@ -10,6 +10,7 @@ class Article extends React.Component {
 
   render() {
     let article = this.props.article;
+    if (!article.author) return <Loading />;
     return (
       <li className='single-article'>
         <div className='flex space-btw'>
@@ -20,7 +21,7 @@ class Article extends React.Component {
               alt={article.author.username}
             />
             <div className=''>
-              <Link to={`/profiles/${article.author.username}`}>
+              <Link to={`/profile/${article.author.username}`}>
                 <h3 className='author-name'>{article.author.username}</h3>
               </Link>
               <span className='date'>
@@ -28,19 +29,28 @@ class Article extends React.Component {
               </span>
             </div>
           </div>
-          <div className='likes-count-holder'>
-            <FaHeart className='heart' />
+          <div
+            onClick={() =>
+              this.props.likeArticle(article.favorited, article.slug)
+            }
+            className='likes-count-holder'
+          >
+            {article.favorited ? (
+              <i className='ion-android-favorite' />
+            ) : (
+              <i className='ion-android-favorite-outline' />
+            )}
             <span className='likes'>{article.favoritesCount}</span>
           </div>
         </div>
-        <Link to={`/article/${article.slug}`}>
-          <div className='padd-1'>
-            <h2 className='article-title'>{article.title}</h2>
-            <p className='article-description'>
+        <div className='padd-1'>
+          <Link to={`/article/${article.slug}`}>
+            <button className='article-title'>{article.title}</button>
+            <button className='article-description'>
               {article.description.substring(0, 100)}...
-            </p>
-          </div>
-        </Link>
+            </button>
+          </Link>
+        </div>
         <div className='flex space-btw'>
           <Link to={`/article/${article.slug}`}>
             <button className='read-more'>Read more...</button>

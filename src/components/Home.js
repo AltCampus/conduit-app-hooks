@@ -5,13 +5,13 @@ import Posts from './Posts';
 import Sidebar from './Sidebar';
 import FeedNav from './FeedNav';
 import Pagination from './Pagination';
-import { articlesURL, feedURL } from '../utils/constant';
-
+import { articlesURL, feedURL, singleArticleURL } from '../utils/constant';
+import Article from './Article';
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      articles: null,
+      articles: [],
       articlesCount: 0,
       articlesPerPage: 10,
       activePageIndex: 1,
@@ -59,6 +59,7 @@ class Home extends React.Component {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
     let tag = this.state.activeTag;
+    let token = this.props.user ? this.props.user.token : '';
     fetch(
       articlesURL +
         `/?offset=${offset}&limit=${limit}` +
@@ -67,6 +68,7 @@ class Home extends React.Component {
         method: 'GET',
         headers: {
           'Content-type': 'application/json',
+          Authorization: `Token ${token}`,
         },
       }
     )
@@ -119,6 +121,36 @@ class Home extends React.Component {
     this.setState({ activePageIndex: val }, this.getArticles);
   };
 
+  likeArticle = (favourted, slug) => {
+    let isUserLoggedIn = this.props.isUserLoggedIn;
+    let method = favourted === true ? 'DELETE' : 'POST';
+    let token = this.props.user ? this.props.user.token : '';
+    if (isUserLoggedIn) {
+      fetch(`${singleArticleURL}/${slug}/favorite`, {
+        method: method,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            return res.json().then(({ errors }) => {
+              return Promise.reject(errors);
+            });
+          }
+          return res.json();
+        })
+        .then(({ article }) => {
+          if (this.state.feedSelected === 'myFeed' && !this.state.activeTag) {
+            this.myFeed();
+          } else {
+            this.getArticles();
+          }
+        })
+        .catch((error) => this.setState({ error }));
+    }
+  };
+
   render() {
     let {
       articles,
@@ -128,7 +160,6 @@ class Home extends React.Component {
       activeTag,
       error,
     } = this.state;
-
     if (error) return <Error error={error} />;
     return (
       <main>
@@ -144,13 +175,21 @@ class Home extends React.Component {
                   feedSelected={this.state.feedSelected}
                   isUserLoggedIn={this.props.isUserLoggedIn}
                 />
-                <Posts articles={articles || []} />
-                <Pagination
-                  articlesCount={articlesCount}
-                  articlesPerPage={articlesPerPage}
-                  activePageIndex={activePageIndex}
-                  updateCurrentPageIndex={this.updateCurrentPageIndex}
+                <Posts
+                  articles={articles || []}
+                  user={this.props.user}
+                  likeArticle={this.likeArticle}
                 />
+                {articlesCount > 10 ? (
+                  <Pagination
+                    articlesCount={articlesCount}
+                    articlesPerPage={articlesPerPage}
+                    activePageIndex={activePageIndex}
+                    updateCurrentPageIndex={this.updateCurrentPageIndex}
+                  />
+                ) : (
+                  ''
+                )}
               </div>
               <Sidebar addTab={this.addTab} activeTag={activeTag} />
             </div>

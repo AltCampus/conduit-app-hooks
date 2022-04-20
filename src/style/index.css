@@ -228,6 +228,12 @@ header {
 .active {
   color: grey;
 }
+.header-user-img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
 
 /* Not Found */
 
@@ -318,8 +324,14 @@ header {
 
 /* Main */
 
+.no-articles {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: tomato;
+}
 .global-feed {
   cursor: pointer;
+  color: gray;
 }
 .feed-toggle::after {
   content: '';
@@ -437,12 +449,17 @@ header {
   margin-bottom: 0.5rem;
   cursor: pointer;
   width: fit-content;
+  border: none;
+  background-color: transparent;
+  text-align: start;
 }
 .article-description {
   font-size: 1rem;
   color: rgb(105, 105, 105);
   cursor: pointer;
   width: fit-content;
+  border: none;
+  background-color: transparent;
 }
 .read-more {
   border: none;
@@ -594,6 +611,10 @@ header {
   border-radius: 10px;
   cursor: pointer;
 }
+.logout-btn:hover {
+  background-color: tomato;
+  color: white;
+}
 
 /* user profile */
 
@@ -637,4 +658,84 @@ header {
 .ion-ios-gear {
   margin-right: 5px;
   font-size: 1.1rem;
+}
+
+/* Add comment */
+
+.post-comment-holder {
+  padding: 1rem;
+  background-color: rgb(236, 235, 235);
+}
+.comment-box-holder,
+.comment-list-holder {
+  width: 50%;
+  margin: 3rem auto;
+  font-size: 0;
+  border-radius: 10px;
+  border: 2px solid lightgray;
+}
+.commentInput {
+  width: 100%;
+  height: 100px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border: none;
+}
+.commentInput:focus {
+  outline: none;
+}
+.comment-user-info {
+  font-size: 0.9rem;
+}
+.comment-user-info img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.comment-user-info h3 {
+  font-size: 0.9rem;
+}
+.post-comment {
+  padding: 10px;
+  float: none;
+  margin: 0;
+}
+.comment-text {
+  font-size: 1.1rem;
+  padding: 1rem;
+}
+.comment-username {
+  color: green;
+  font-size: 1rem;
+}
+
+/* Edit And Delete Article */
+
+.edit-article {
+  padding: 0.5rem 1rem;
+  color: rgb(198, 197, 197);
+  border: 2px solid rgb(204, 203, 203);
+  background-color: transparent;
+}
+
+.delete-article {
+  padding: 0.5rem 1rem;
+  color: rgb(252, 88, 88);
+  border: 2px solid rgb(245, 78, 78);
+  background-color: transparent;
+}
+
+.unFollow-user {
+  background-color: rgb(230, 229, 230);
+}
+.ion-android-favorite,
+.ion-android-favorite-outline {
+  color: green;
+}
+.ion-ios-trash-outline {
+  border: none;
+  color: red;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 800;
 }

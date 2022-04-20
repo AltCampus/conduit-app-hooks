@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import { getProfile, userVerifyURL } from '../utils/constant';
 import validate from '../utils/validate';
 class Settings extends React.Component {
@@ -19,6 +20,10 @@ class Settings extends React.Component {
   }
 
   componentDidMount() {
+    this.getProfile();
+  }
+
+  getProfile = () => {
     let token = this.props.user.token;
     fetch(userVerifyURL, {
       method: 'GET',
@@ -37,19 +42,21 @@ class Settings extends React.Component {
       })
       .then((profile) => {
         this.setState({
-          email: profile.user.email,
-          username: profile.user.username,
+          email: profile.user.email || '',
+          username: profile.user.username || '',
+          image: profile.user.image || '',
+          bio: profile.user.bio || '',
         });
       })
       .catch((error) => console.log(error));
-  }
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
     let { username, email, image, bio, password, errors } = this.state;
     let token = this.props.user.token;
 
-    if ((username, email, password)) {
+    if (!errors.username && !errors.email && !errors.password) {
       fetch(userVerifyURL, {
         method: 'PUT',
         body: JSON.stringify({
@@ -61,7 +68,6 @@ class Settings extends React.Component {
         },
       })
         .then((res) => {
-          console.log(res);
           if (!res.ok) {
             return res.json().then((data) => {
               for (let key in data.errors) {
@@ -73,27 +79,15 @@ class Settings extends React.Component {
           return res.json();
         })
         .then((profile) => {
-          console.log(profile);
-          // this.setState({
-          //   email: profile.user.email,
-          //   username: profile.user.username,
-          //   image: profile.user.image,
-          //   bio: profile.user.bio,
-          //   password: profile.user.password,
-          // });
+          this.props.history.push('/');
+          this.setState({
+            email: '',
+            username: '',
+            image: '',
+            bio: '',
+          });
         })
         .catch((error) => console.log(error));
-    } else {
-      if (!username) {
-        errors.username = "Can't be Empty";
-      }
-      if (!email) {
-        errors.email = "Can't be Empty";
-      }
-      if (!password) {
-        errors.password = "Can't be Empty";
-      }
-      this.setState({ errors });
     }
   };
 
@@ -172,4 +166,4 @@ class Settings extends React.Component {
   }
 }
 
-export default Settings;
+export default withRouter(Settings);

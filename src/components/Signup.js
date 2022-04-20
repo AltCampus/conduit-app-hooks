@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import validate from '../utils/validate';
+import { signUpURL } from '../utils/constant';
 class Signup extends React.Component {
   constructor(props) {
     super(props);
@@ -21,55 +22,41 @@ class Signup extends React.Component {
     let errors = { ...this.state.errors };
 
     validate(errors, name, value);
-    // switch (name) {
-    //   case 'email':
-    //     let emailError = '';
-    //     if (value.indexOf('@') === -1) {
-    //       emailError = 'Email should contain @';
-    //     }
-    //     if (!value) {
-    //       emailError = 'Email cant be empty';
-    //     }
-    //     errors.email = emailError;
-    //     break;
-    //   case 'username':
-    //     let usernameError = '';
-    //     if (value.length < 6) {
-    //       usernameError = 'username should contain 6 charachter';
-    //     }
-    //     if (!value) {
-    //       usernameError = 'Email cant be empty';
-    //     }
-    //     errors.username = usernameError;
-    //     break;
-    //   case 'password':
-    //     let passwordError = '';
-    //     var numeric_alpha = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
-
-    //     if (!value) {
-    //       passwordError = "Password can't be empty";
-    //     } else if (!numeric_alpha.test(value)) {
-    //       passwordError = 'Password should contain one alphabet and one number';
-    //     } else if (value.length < 7) {
-    //       passwordError = 'Password should contain atleast 6 character';
-    //     }
-    //     errors.password = passwordError;
-    //     break;
-    //   default:
-    //     break;
-    // }
-
     this.setState({ [name]: value, errors });
+  };
+
+  signInUser = (username, email, password) => {
+    fetch(signUpURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user: { username, email, password },
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then(({ errors }) => {
+            return Promise.reject(errors);
+          });
+        }
+        return res.json();
+      })
+      .then(({ user }) => {
+        this.props.updateUser(user);
+        this.props.history.push('/');
+      })
+      .catch((errors) => this.setState({ errors }));
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let { username, email, password, errors } = this.state;
-    this.setState({ username, email, password, errors });
+    let { username, email, password } = this.state;
+    if (username && email && password) {
+      this.signInUser(username, email, password);
+    }
   };
 
   render() {
-    let errors = this.state;
     return (
       <div className='signin'>
         <form
@@ -114,16 +101,11 @@ class Signup extends React.Component {
           <h2 className='err-msg'>
             {this.state.errors.password ? this.state.errors.password : ''}
           </h2>
-          <input
-            type='submit'
-            value='Sign up'
-            disabled={errors.username || errors.email || errors.password}
-            className='signin-submit'
-          />
+          <input type='submit' value='Sign up' className='signin-submit' />
         </form>
       </div>
     );
   }
 }
 
-export default Signup;
+export default withRouter(Signup);

@@ -2,12 +2,14 @@ import React from 'react';
 import { singleArticleURL } from '../utils/constant';
 import Loading from './Loading';
 import Error from './Error';
+import { Link } from 'react-router-dom';
 
 class SingleArticle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       article: '',
+      error: '',
     };
   }
   componentDidMount() {
@@ -25,9 +27,10 @@ class SingleArticle extends React.Component {
       .then((data) => {
         this.setState({
           article: data.article,
+          error: '',
         });
       })
-      .catch((err) => <Error error={err} />);
+      .catch((err) => this.setState({ error: err }));
   };
 
   updatedDate = (val) => {
@@ -36,8 +39,9 @@ class SingleArticle extends React.Component {
   };
 
   render() {
-    let { article } = this.state;
+    let { article, error } = this.state;
     if (!article) return <Loading />;
+    if (error) return <Error error={error} />;
     return (
       <div className=''>
         <section id='single-art-hero'>
@@ -50,9 +54,11 @@ class SingleArticle extends React.Component {
                 alt={article.author.username}
               />
               <div className=''>
-                <h3 className='author-name author-single-art'>
-                  {article.author.username}
-                </h3>
+                <Link to={`/profiles/${article.author.username}`}>
+                  <h3 className='author-name author-single-art'>
+                    {article.author.username}
+                  </h3>
+                </Link>
                 <span className='date'>
                   {this.updatedDate(article.updatedAt)}
                 </span>

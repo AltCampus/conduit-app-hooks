@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { articlesURL, getProfile } from '../utils/constant';
+import { articlesURL, getProfile, singleArticleURL } from '../utils/constant';
 import Posts from './Posts';
 import Loading from './Loading';
 import Pagination from './Pagination';
@@ -54,13 +54,13 @@ class Profile extends React.Component {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
     let user = this.props.match.params;
-
+    let token = this.props.user ? this.props.user.token : '';
     fetch(
       `${articlesURL}?${this.state.feedSelected}=${user.username}&offset=${offset}&limit=${limit}`,
       {
         method: 'GET',
         headers: {
-          Authorization: `Token ${user.token}`,
+          Authorization: `Token ${token}`,
           'Content-type': 'application/json',
         },
       }
@@ -129,6 +129,36 @@ class Profile extends React.Component {
       .catch((error) => this.setState({ error }));
   };
 
+  likeArticle = (favourted, slug) => {
+    let isUserLoggedIn = this.props.isUserLoggedIn;
+    let method = favourted === true ? 'DELETE' : 'POST';
+    let token = this.props.user ? this.props.user.token : '';
+    if (isUserLoggedIn) {
+      fetch(`${singleArticleURL}/${slug}/favorite`, {
+        method: method,
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            return res.json().then(({ errors }) => {
+              return Promise.reject(errors);
+            });
+          }
+          return res.json();
+        })
+        .then(({ article }) => {
+          if (this.state.feedSelected === 'myFeed') {
+            this.myFeed();
+          } else {
+            this.getArticles();
+          }
+        })
+        .catch((error) => this.setState({ error }));
+    }
+  };
+
   render() {
     let { articlesCount, articlesPerPage, activePageIndex } = this.state;
     if (this.state.error) return <Error error={this.state.error} />;
@@ -145,7 +175,11 @@ class Profile extends React.Component {
             feedSelected={this.state.feedSelected}
             handleFeedSelected={this.handleFeedSelected}
           />
-          <Posts articles={this.state.articles} user={this.props.user} />
+          <Posts
+            articles={this.state.articles}
+            user={this.props.user}
+            likeArticle={this.likeArticle}
+          />
           {this.state.articlesCount > 10 ? (
             <Pagination
               articlesCount={articlesCount}
@@ -173,7 +207,9 @@ function Banner(props) {
       />
       <h2 className='user-profile-name'>{props.profile.username}</h2>
       <h3 className='user-profile-bio'>{props.profile.bio}</h3>
-      {props.user && props.profile.username !== props.user.username ? (
+      {!props.user ? (
+        ''
+      ) : props.user && props.profile.username !== props.user.username ? (
         !props.profile.following ? (
           <button onClick={props.followUser} className='follow-user'>
             <i className='ion-plus-round'></i>

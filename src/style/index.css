@@ -228,6 +228,12 @@ header {
 .active {
   color: grey;
 }
+.header-user-img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
 
 /* Not Found */
 
@@ -318,8 +324,14 @@ header {
 
 /* Main */
 
+.no-articles {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: tomato;
+}
 .global-feed {
   cursor: pointer;
+  color: gray;
 }
 .feed-toggle::after {
   content: '';
@@ -437,12 +449,17 @@ header {
   margin-bottom: 0.5rem;
   cursor: pointer;
   width: fit-content;
+  border: none;
+  background-color: transparent;
+  text-align: start;
 }
 .article-description {
   font-size: 1rem;
   color: rgb(105, 105, 105);
   cursor: pointer;
   width: fit-content;
+  border: none;
+  background-color: transparent;
 }
 .read-more {
   border: none;
@@ -594,6 +611,10 @@ header {
   border-radius: 10px;
   cursor: pointer;
 }
+.logout-btn:hover {
+  background-color: tomato;
+  color: white;
+}
 
 /* user profile */
 
@@ -710,4 +731,11 @@ header {
 .ion-android-favorite,
 .ion-android-favorite-outline {
   color: green;
+}
+.ion-ios-trash-outline {
+  border: none;
+  color: red;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 800;
 }

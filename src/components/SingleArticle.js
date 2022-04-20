@@ -3,12 +3,12 @@ import { singleArticleURL } from '../utils/constant';
 import Loading from './Loading';
 import Error from './Error';
 import { Link, withRouter } from 'react-router-dom';
-import AddComment from './AddComment';
+import Comment from './Comment';
 class SingleArticle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      article: '',
+      article: null,
       error: '',
     };
   }
@@ -44,20 +44,15 @@ class SingleArticle extends React.Component {
       },
     })
       .then((res) => {
-        if (!res.ok) {
+        if (res.status !== 204) {
           return res.json().then(({ errors }) => {
+            console.log(errors);
             return Promise.reject(errors);
           });
         }
-        return res.json();
+        this.props.history.push('/');
       })
-      .then((data) => {
-        this.setState({
-          article: '',
-          error: '',
-        });
-        this.props.history.push(`/profiles/${this.props.user.username}`);
-      })
+
       .catch((err) => this.setState({ error: err }));
   };
 
@@ -75,8 +70,8 @@ class SingleArticle extends React.Component {
 
   render() {
     let { article, error } = this.state;
-    if (!article) return <Loading />;
     if (error) return <Error error={error} />;
+    if (!article) return <Loading />;
     return (
       <div className=''>
         <section id='single-art-hero'>
@@ -87,10 +82,10 @@ class SingleArticle extends React.Component {
                 <img
                   className='author-img'
                   src={article.author.image}
-                  alt={article.author.username}
+                  alt={article.author.username || ''}
                 />
                 <div className=''>
-                  <Link to={`/profiles/${article.author.username}`}>
+                  <Link to={`/profile/${article.author.username}`}>
                     <h3 className='author-name author-single-art'>
                       {article.author.username}
                     </h3>
@@ -100,16 +95,20 @@ class SingleArticle extends React.Component {
                   </span>
                 </div>
               </div>
-              {this.state.article.author.username ===
-              this.props.user.username ? (
+              {this.props.user &&
+              this.state.article.author.username ===
+                this.props.user.username ? (
                 <div>
-                  <button onClick={this.handleEdit} className='edit-article'>
+                  <button
+                    onClick={this.handleEdit}
+                    className='edit-article pointer'
+                  >
                     <i className='ion-edit'></i>
                     Edit Article
                   </button>
                   <button
                     onClick={this.handleDeleteArticle}
-                    className='delete-article'
+                    className='delete-article pointer'
                   >
                     <i className='ion-trash-a'></i>
                     Delete Article
@@ -144,7 +143,7 @@ class SingleArticle extends React.Component {
                 article
               </p>
             ) : (
-              <AddComment user={this.props.user} slug={article.slug} />
+              <Comment user={this.props.user} slug={article.slug} />
             )}
           </div>
         </section>

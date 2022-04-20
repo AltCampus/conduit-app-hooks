@@ -52,7 +52,15 @@ function AuthHeader(props) {
           className='nav-link flex align-center'
           activeclassname='active'
         >
-          <i className='ion-android-contact'></i>
+          {props.user.image ? (
+            <img
+              className='header-user-img'
+              src={props.user.image}
+              alt='user-image'
+            />
+          ) : (
+            <i className='ion-android-contact'></i>
+          )}
           {props.user.username}
         </NavLink>
       </li>

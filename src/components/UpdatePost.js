@@ -23,12 +23,7 @@ class UpdatePost extends React.Component {
 
   componentDidMount() {
     this.getArticle(this.props.match.params.slug);
-    this.allArticle(this.props);
   }
-
-  allArticle = (article) => {
-    console.log(article);
-  };
 
   getArticle = (slug) => {
     fetch(singleArticleURL + slug)
@@ -67,7 +62,9 @@ class UpdatePost extends React.Component {
     let token = this.props.user.token;
     let slug = this.props.match.params.slug;
     if (title && body && description && tagList) {
-      tagList = tagList.split(',').map((tag) => tag.trim());
+      if (typeof tagList === 'string') {
+        tagList = tagList.split(',').map((tag) => tag.trim());
+      }
       fetch(singleArticleURL + slug, {
         method: 'PUT',
         headers: {

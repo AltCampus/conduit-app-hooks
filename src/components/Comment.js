@@ -1,7 +1,8 @@
+import { comment } from 'postcss';
 import React from 'react';
 import { singleArticleURL } from '../utils/constant';
 
-class AddComment extends React.Component {
+class Comment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,7 +22,7 @@ class AddComment extends React.Component {
   }
 
   getComments = () => {
-    let token = this.props.user.token;
+    let token = this.props.user ? this.props.user.token : '';
     fetch(singleArticleURL + this.props.slug + '/comments', {
       method: 'GET',
       headers: {
@@ -71,6 +72,26 @@ class AddComment extends React.Component {
       });
   };
 
+  handleDeleteComment = (id) => {
+    let token = this.props.user.token;
+    fetch(singleArticleURL + this.props.slug + '/comments/' + id, {
+      method: 'DELETE',
+      headers: {
+        authorization: `Token ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 204) {
+          throw new Error('Article didnot delete');
+        }
+        this.getComments();
+        // return res.json();
+      })
+      .catch((error) => {
+        this.setState({ error }, this.getComments);
+      });
+  };
+
   updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();
@@ -91,13 +112,22 @@ class AddComment extends React.Component {
               ></textarea>
             </div>
             <div className='flex space-btw post-comment-holder'>
-              <div className='comment-user-info'>
+              <div className='comment-user-info flex align-center'>
+                {this.props.user.image ? (
+                  <img
+                    className='header-user-img'
+                    src={this.props.user.image}
+                    alt='user-image'
+                  />
+                ) : (
+                  <i className='ion-android-contact'></i>
+                )}
                 {this.props.user.username}
               </div>
               <input
                 type='submit'
                 value='Post Comment'
-                className='signin-submit post-comment'
+                className='signin-submit post-comment pointer'
               />
             </div>
           </form>
@@ -120,6 +150,16 @@ class AddComment extends React.Component {
                     </h3>
                     <h3>{this.updatedDate(comment.createdAt)}</h3>
                   </div>
+                  {comment.author.username === this.props.user.username ? (
+                    <button
+                      onClick={() => this.handleDeleteComment(comment.id)}
+                      className='pointer'
+                    >
+                      <i className='ion-ios-trash-outline' />
+                    </button>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
             );
@@ -130,4 +170,4 @@ class AddComment extends React.Component {
   }
 }
 
-export default AddComment;
+export default Comment;

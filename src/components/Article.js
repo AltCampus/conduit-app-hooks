@@ -1,32 +1,15 @@
 import React from 'react';
-import { FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { singleArticleURL, localStorageKey } from '../utils/constant';
 import Loading from './Loading';
 
 class Article extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      article: [],
-    };
-  }
-
-  componentDidMount() {
-    this.getArticle();
-  }
-
-  getArticle = () => {
-    this.setState({ article: this.props.article });
-  };
-
   updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();
   };
 
   render() {
-    let article = this.state.article;
+    let article = this.props.article;
     if (!article.author) return <Loading />;
     return (
       <li className='single-article'>
@@ -60,14 +43,14 @@ class Article extends React.Component {
             <span className='likes'>{article.favoritesCount}</span>
           </div>
         </div>
-        <Link to={`/article/${article.slug}`}>
-          <div className='padd-1'>
-            <h2 className='article-title'>{article.title}</h2>
-            <p className='article-description'>
+        <div className='padd-1'>
+          <Link to={`/article/${article.slug}`}>
+            <button className='article-title'>{article.title}</button>
+            <button className='article-description'>
               {article.description.substring(0, 100)}...
-            </p>
-          </div>
-        </Link>
+            </button>
+          </Link>
+        </div>
         <div className='flex space-btw'>
           <Link to={`/article/${article.slug}`}>
             <button className='read-more'>Read more...</button>

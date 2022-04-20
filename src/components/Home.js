@@ -6,12 +6,12 @@ import Sidebar from './Sidebar';
 import FeedNav from './FeedNav';
 import Pagination from './Pagination';
 import { articlesURL, feedURL, singleArticleURL } from '../utils/constant';
-
+import Article from './Article';
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      articles: null,
+      articles: [],
       articlesCount: 0,
       articlesPerPage: 10,
       activePageIndex: 1,
@@ -124,7 +124,7 @@ class Home extends React.Component {
   likeArticle = (favourted, slug) => {
     let isUserLoggedIn = this.props.isUserLoggedIn;
     let method = favourted === true ? 'DELETE' : 'POST';
-    let token = this.props.user.token;
+    let token = this.props.user ? this.props.user.token : '';
     if (isUserLoggedIn) {
       fetch(`${singleArticleURL}/${slug}/favorite`, {
         method: method,
@@ -141,7 +141,7 @@ class Home extends React.Component {
           return res.json();
         })
         .then(({ article }) => {
-          if (this.state.feedSelected === 'myFeed') {
+          if (this.state.feedSelected === 'myFeed' && !this.state.activeTag) {
             this.myFeed();
           } else {
             this.getArticles();
@@ -160,7 +160,6 @@ class Home extends React.Component {
       activeTag,
       error,
     } = this.state;
-    console.log(articles);
     if (error) return <Error error={error} />;
     return (
       <main>
@@ -181,12 +180,16 @@ class Home extends React.Component {
                   user={this.props.user}
                   likeArticle={this.likeArticle}
                 />
-                <Pagination
-                  articlesCount={articlesCount}
-                  articlesPerPage={articlesPerPage}
-                  activePageIndex={activePageIndex}
-                  updateCurrentPageIndex={this.updateCurrentPageIndex}
-                />
+                {articlesCount > 10 ? (
+                  <Pagination
+                    articlesCount={articlesCount}
+                    articlesPerPage={articlesPerPage}
+                    activePageIndex={activePageIndex}
+                    updateCurrentPageIndex={this.updateCurrentPageIndex}
+                  />
+                ) : (
+                  ''
+                )}
               </div>
               <Sidebar addTab={this.addTab} activeTag={activeTag} />
             </div>

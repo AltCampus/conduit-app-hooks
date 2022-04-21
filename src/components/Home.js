@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import FeedNav from './FeedNav';
 import Pagination from './Pagination';
 import { articlesURL, feedURL, singleArticleURL } from '../utils/constant';
-import Article from './Article';
+
 class Home extends React.Component {
   constructor(props) {
     super(props);

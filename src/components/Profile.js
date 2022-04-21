@@ -203,7 +203,7 @@ function Banner(props) {
       <img
         className='user-profile-image'
         src={props.profile.image}
-        alt={'image'}
+        alt={props.profile.username}
       />
       <h2 className='user-profile-name'>{props.profile.username}</h2>
       <h3 className='user-profile-bio'>{props.profile.bio}</h3>

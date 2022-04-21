@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/conduit-app/static/css/main.d90aa6fb.css",
+    "main.js": "/conduit-app/static/js/main.243b047e.js",
+    "index.html": "/conduit-app/index.html",
+    "static/media/index.cjs": "/conduit-app/static/media/index.cd351d7c31d0d3fccf96.cjs",
+    "main.d90aa6fb.css.map": "/conduit-app/static/css/main.d90aa6fb.css.map",
+    "main.243b047e.js.map": "/conduit-app/static/js/main.243b047e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d90aa6fb.css",
+    "static/js/main.243b047e.js"
+  ]
+}

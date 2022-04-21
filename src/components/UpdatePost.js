@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { articlesURL, singleArticleURL } from '../utils/constant';
+import { singleArticleURL } from '../utils/constant';
 import Error from './Error';
 
 class UpdatePost extends React.Component {

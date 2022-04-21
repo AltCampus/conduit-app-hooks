@@ -82,7 +82,7 @@ class SingleArticle extends React.Component {
                 <img
                   className='author-img'
                   src={article.author.image}
-                  alt={article.author.username || ''}
+                  alt={article.author.username || 'user-img'}
                 />
                 <div className=''>
                   <Link to={`/profile/${article.author.username}`}>

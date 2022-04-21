@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { getProfile, userVerifyURL } from '../utils/constant';
+import { userVerifyURL } from '../utils/constant';
 import validate from '../utils/validate';
 class Settings extends React.Component {
   constructor(props) {

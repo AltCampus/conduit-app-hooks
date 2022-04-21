@@ -1,4 +1,3 @@
-import { comment } from 'postcss';
 import React from 'react';
 import { singleArticleURL } from '../utils/constant';
 
@@ -117,7 +116,7 @@ class Comment extends React.Component {
                   <img
                     className='header-user-img'
                     src={this.props.user.image}
-                    alt='user-image'
+                    alt={this.props.user.username}
                   />
                 ) : (
                   <i className='ion-android-contact'></i>

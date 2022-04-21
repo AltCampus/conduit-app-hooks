@@ -56,7 +56,7 @@ function AuthHeader(props) {
             <img
               className='header-user-img'
               src={props.user.image}
-              alt='user-image'
+              alt='user-profile'
             />
           ) : (
             <i className='ion-android-contact'></i>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { AiFillHeart } from 'react-icons/ai';
 
 function Header(props) {
   return (
@@ -43,6 +44,7 @@ function AuthHeader(props) {
           activeclassname='active'
         >
           <i className='ion-ios-gear'></i>
+          <AiFillHeart />
           Setting
         </NavLink>
       </li>

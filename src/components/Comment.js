@@ -1,4 +1,7 @@
 import React from 'react';
+import { BiTrash } from 'react-icons/bi';
+import { AiOutlineUser } from 'react-icons/ai';
+
 import { singleArticleURL } from '../utils/constant';
 
 class Comment extends React.Component {
@@ -119,7 +122,7 @@ class Comment extends React.Component {
                     alt={this.props.user.username}
                   />
                 ) : (
-                  <i className='ion-android-contact'></i>
+                  <AiOutlineUser className='margin-rigth-5' />
                 )}
                 {this.props.user.username}
               </div>
@@ -152,9 +155,9 @@ class Comment extends React.Component {
                   {comment.author.username === this.props.user.username ? (
                     <button
                       onClick={() => this.handleDeleteComment(comment.id)}
-                      className='pointer'
+                      className='pointer delete-comment'
                     >
-                      <i className='ion-ios-trash-outline' />
+                      <BiTrash />
                     </button>
                   ) : (
                     ''

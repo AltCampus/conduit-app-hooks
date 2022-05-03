@@ -30,6 +30,13 @@ class Sidebar extends React.Component {
   };
   render() {
     let { tags, error } = this.state;
+    if (tags) {
+      tags = this.state.tags.filter((tag) => {
+        if (tag) return tag;
+        return '';
+      });
+    }
+
     if (error) return <Error error={error} />;
     return (
       <aside className='tags'>

@@ -4,7 +4,6 @@ import Loading from './Loading';
 
 function Posts(props) {
   let articles = props.articles;
-  // console.log(articles, 'POST');
   if (articles === null) return <Loading />;
   if (articles.length === 0)
     return <h1 className='no-articles'>No Articles are here... yet</h1>;

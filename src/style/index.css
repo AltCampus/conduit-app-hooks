@@ -178,6 +178,9 @@ a:-webkit-any-link {
 .pointer {
   cursor: pointer;
 }
+.margin-rigth-5 {
+  margin-right: 5px;
+}
 
 /* Loading */
 @keyframes bouncing-loader {
@@ -217,6 +220,7 @@ header {
 .logo {
   color: rgb(89, 172, 89);
   font-size: 1.5rem;
+  font-weight: 600;
 }
 .nav-link {
   font-size: 1rem;
@@ -320,6 +324,7 @@ header {
 .err-msg {
   color: red;
   margin: 5px;
+  margin-top: 10px;
 }
 
 /* Main */
@@ -332,6 +337,8 @@ header {
 .global-feed {
   cursor: pointer;
   color: gray;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 .feed-toggle::after {
   content: '';
@@ -353,10 +360,12 @@ header {
   background-color: rgb(223, 242, 247);
   border-radius: 5px;
   height: fit-content;
-  padding: 0.3rem 0.2rem;
+  padding: 1.3rem 1.2rem;
 }
 .tags-heading {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgb(4, 159, 226);
 }
 .tag {
   background-color: rgb(185, 221, 227);
@@ -402,6 +411,7 @@ header {
   margin-top: 2rem;
   flex-wrap: wrap;
 }
+
 /* Article */
 
 .author-img {
@@ -653,6 +663,10 @@ header {
   float: right;
   cursor: pointer;
 }
+.follow-user svg {
+  margin-right: 5px;
+}
+
 .ion-android-contact,
 .ion-compose,
 .ion-ios-gear {
@@ -684,8 +698,9 @@ header {
 .commentInput:focus {
   outline: none;
 }
-.comment-user-info {
-  font-size: 0.9rem;
+.comment-user-info,
+.comment-user-info svg {
+  font-size: 1.1rem;
 }
 .comment-user-info img {
   width: 30px;
@@ -707,6 +722,12 @@ header {
 .comment-username {
   color: green;
   font-size: 1rem;
+}
+.delete-comment {
+  border: none;
+}
+.delete-comment svg {
+  font-size: 1.3rem;
 }
 
 /* Edit And Delete Article */

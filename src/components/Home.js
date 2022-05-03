@@ -24,8 +24,9 @@ class Home extends React.Component {
   emptyTab = () => {
     this.setState({ activeTag: '' });
   };
+
   addTab = (val) => {
-    this.setState({ activeTag: val });
+    this.setState({ activeTag: val, activePageIndex: 1 });
   };
 
   changeFeedSelected = (val) => {
@@ -92,6 +93,7 @@ class Home extends React.Component {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
     let token = this.props.user.token;
+    console.log('My Feed');
     fetch(feedURL + `/?offset=${offset}&limit=${limit}`, {
       method: 'GET',
       headers: {
@@ -118,7 +120,10 @@ class Home extends React.Component {
   };
 
   updateCurrentPageIndex = (val) => {
-    this.setState({ activePageIndex: val }, this.getArticles);
+    this.setState(
+      { activePageIndex: val },
+      this.state.feedSelected === 'myFeed' ? this.myFeed : this.getArticles
+    );
   };
 
   likeArticle = (favourted, slug) => {

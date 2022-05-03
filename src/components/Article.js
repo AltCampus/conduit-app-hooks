@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import Loading from './Loading';
 
 class Article extends React.Component {
@@ -36,9 +37,9 @@ class Article extends React.Component {
             className='likes-count-holder'
           >
             {article.favorited ? (
-              <i className='ion-android-favorite' />
+              <AiFillHeart className='likes' />
             ) : (
-              <i className='ion-android-favorite-outline' />
+              <AiOutlineHeart className='heart' />
             )}
             <span className='likes'>{article.favoritesCount}</span>
           </div>

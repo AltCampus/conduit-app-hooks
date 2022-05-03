@@ -8,7 +8,7 @@ const loginURL = Root_url + 'users/login';
 const signUpURL = Root_url + 'users';
 const localStorageKey = 'app_user';
 const userVerifyURL = Root_url + 'user';
-const getProfile = Root_url + '/profiles/';
+const getProfile = Root_url + 'profiles/';
 
 export {
   Root_url,

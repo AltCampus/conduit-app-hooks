@@ -5,6 +5,9 @@ import Posts from './Posts';
 import Loading from './Loading';
 import Pagination from './Pagination';
 import Error from './Error';
+import { AiFillSetting } from 'react-icons/ai';
+import { BiPlusMedical } from 'react-icons/bi';
+import { FaMinus } from 'react-icons/fa';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -37,7 +40,15 @@ class Profile extends React.Component {
 
   getUser = () => {
     let user = this.props.match.params;
-    fetch(getProfile + user.username)
+    let token = this.props.user ? this.props.user.token : '';
+
+    fetch(getProfile + user.username, {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-type': 'application/json',
+      },
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error('Profile couldnot fetched');
@@ -45,6 +56,7 @@ class Profile extends React.Component {
         return res.json();
       })
       .then(({ profile }) => {
+        console.log(profile);
         this.setState({ profile });
       })
       .catch((error) => this.setState({ error }));
@@ -88,7 +100,7 @@ class Profile extends React.Component {
   followUser = () => {
     let profile = this.state.profile;
     let token = this.props.user.token;
-    fetch(`${getProfile}/${profile.username}/follow`, {
+    fetch(`${getProfile}${profile.username}/follow`, {
       method: 'POST',
       headers: {
         Authorization: `Token ${token}`,
@@ -102,6 +114,8 @@ class Profile extends React.Component {
         return res.json();
       })
       .then(({ profile }) => {
+        console.log(profile);
+
         this.setState({ profile });
       })
       .catch((error) => this.setState({ error }));
@@ -211,24 +225,27 @@ function Banner(props) {
         ''
       ) : props.user && props.profile.username !== props.user.username ? (
         !props.profile.following ? (
-          <button onClick={props.followUser} className='follow-user'>
-            <i className='ion-plus-round'></i>
+          <button
+            onClick={props.followUser}
+            className='follow-user flex align-center'
+          >
+            <BiPlusMedical />
             Follow user
           </button>
         ) : (
           <button
             onClick={props.unfollowUser}
-            className='follow-user unFollow-user'
+            className='follow-user unFollow-user flex align-center'
           >
-            <i className='ion-plus-round'></i>
+            <FaMinus />
             UnFollow user
           </button>
         )
       ) : (
         <Link to='/setting'>
-          <button className='follow-user'>
-            <i className='ion-ios-gear'></i>
-            Edit UserInfo Settings
+          <button className='follow-user flex align-center'>
+            <AiFillSetting className='setting-icon' />
+            User Info Settings
           </button>
         </Link>
       )}

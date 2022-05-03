@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { AiFillHeart } from 'react-icons/ai';
+import { AiFillSetting, AiOutlineUser } from 'react-icons/ai';
+import { GiNotebook } from 'react-icons/gi';
 
 function Header(props) {
   return (
@@ -25,7 +26,7 @@ function Header(props) {
 
 function AuthHeader(props) {
   return (
-    <ol className='flex gap-2'>
+    <ol className='flex gap-2 align-center'>
       <li>
         <NavLink to='/' className='nav-link' activeclassname='active' exact>
           Home
@@ -33,7 +34,7 @@ function AuthHeader(props) {
       </li>
       <li>
         <NavLink to='/newPost' className='nav-link' activeclassname='active'>
-          <i className='ion-compose'></i>
+          <GiNotebook className='margin-rigth-5' />
           New Article
         </NavLink>
       </li>
@@ -43,8 +44,7 @@ function AuthHeader(props) {
           className='nav-link flex align-center'
           activeclassname='active'
         >
-          <i className='ion-ios-gear'></i>
-          <AiFillHeart />
+          <AiFillSetting className='margin-rigth-5' />
           Setting
         </NavLink>
       </li>
@@ -61,7 +61,7 @@ function AuthHeader(props) {
               alt='user-profile'
             />
           ) : (
-            <i className='ion-android-contact'></i>
+            <AiOutlineUser className='margin-rigth-5' />
           )}
           {props.user.username}
         </NavLink>

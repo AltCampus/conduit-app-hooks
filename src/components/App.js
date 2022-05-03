@@ -13,6 +13,7 @@ import Settings from './Settings';
 import Profile from './Profile';
 import Error from './Error';
 import UpdatePost from './UpdatePost';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -63,10 +64,12 @@ class App extends React.Component {
     if (this.state.error) {
       return <Error error={this.state.error} />;
     }
+
     if (this.state.isVerifying) {
       return <FullPageSppiner />;
     }
     let { isUserLoggedIn, user } = this.state;
+
     return (
       <>
         <React.StrictMode>

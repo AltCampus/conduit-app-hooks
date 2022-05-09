@@ -1,9 +1,12 @@
 import React from 'react';
-import { singleArticleURL } from '../utils/constant';
+import { Link, withRouter } from 'react-router-dom';
+
 import Loading from './Loading';
 import Error from './Error';
-import { Link, withRouter } from 'react-router-dom';
 import Comment from './Comment';
+import { singleArticleURL } from '../utils/constant';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+
 class SingleArticle extends React.Component {
   constructor(props) {
     super(props);
@@ -11,6 +14,7 @@ class SingleArticle extends React.Component {
       article: null,
       error: '',
     };
+    this.contextInfo = null;
   }
 
   componentDidMount() {
@@ -36,7 +40,7 @@ class SingleArticle extends React.Component {
 
   handleDeleteArticle = () => {
     let slug = this.props.match.params.slug;
-    let token = this.props.user.token;
+    let token = this.contextInfo.user.token;
     fetch(singleArticleURL + slug, {
       method: 'DELETE',
       headers: {
@@ -46,7 +50,6 @@ class SingleArticle extends React.Component {
       .then((res) => {
         if (res.status !== 204) {
           return res.json().then(({ errors }) => {
-            console.log(errors);
             return Promise.reject(errors);
           });
         }
@@ -68,7 +71,10 @@ class SingleArticle extends React.Component {
     return newDate.toDateString();
   };
 
+  static contextType = LoginUserContext;
+
   render() {
+    this.contextInfo = this.context;
     let { article, error } = this.state;
     if (error) return <Error error={error} />;
     if (!article) return <Loading />;
@@ -95,9 +101,9 @@ class SingleArticle extends React.Component {
                   </span>
                 </div>
               </div>
-              {this.props.user &&
+              {this.contextInfo.user &&
               this.state.article.author.username ===
-                this.props.user.username ? (
+                this.contextInfo.user.username ? (
                 <div>
                   <button
                     onClick={this.handleEdit}
@@ -136,14 +142,14 @@ class SingleArticle extends React.Component {
         </div>
         <section className='comment-section'>
           <div className='container'>
-            {!this.props.isUserLoggedIn ? (
+            {!this.contextInfo.isUserLoggedIn ? (
               <p className='padd-1'>
                 <Link to='/login'>Sign in</Link> or{' '}
                 <Link to='/register'>Sign up</Link> to add comments on this
                 article
               </p>
             ) : (
-              <Comment user={this.props.user} slug={article.slug} />
+              <Comment user={this.contextInfo.user} slug={article.slug} />
             )}
           </div>
         </section>

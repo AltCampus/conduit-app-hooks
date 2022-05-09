@@ -1,18 +1,21 @@
 import React from 'react';
+import { Switch, Route, withRouter } from 'react-router-dom';
+
 import Header from './Header';
 import Home from './Home';
 import NotFound from './NotFound';
-import { Switch, Route, withRouter } from 'react-router-dom';
 import Signin from './Signin';
 import Signup from './Signup';
 import NewPost from './NewPost';
 import SingleArticle from './SingleArticle';
-import { localStorageKey, userVerifyURL } from '../utils/constant';
 import FullPageSppiner from './fullPageSpinner';
 import Settings from './Settings';
 import Profile from './Profile';
 import Error from './Error';
 import UpdatePost from './UpdatePost';
+import { localStorageKey, userVerifyURL } from '../utils/constant';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 class App extends React.Component {
   constructor(props) {
@@ -69,27 +72,29 @@ class App extends React.Component {
       return <FullPageSppiner />;
     }
     let { isUserLoggedIn, user } = this.state;
+    let contextInfo = { isUserLoggedIn, user, updateUser: this.updateUser };
 
     return (
       <>
         <React.StrictMode>
-          <Header isUserLoggedIn={isUserLoggedIn} user={user} />
-          {isUserLoggedIn ? (
-            <AuthenticatedApp
-              isUserLoggedIn={isUserLoggedIn}
-              user={user}
-              logoutUser={this.logoutUser}
-              updateArticle={this.updateArticle}
-              article={this.state.article}
-            />
-          ) : (
-            <UnAuthenticatedApp
-              isUserLoggedIn={isUserLoggedIn}
-              user={user}
-              updateUser={this.updateUser}
-              article={this.state.article}
-            />
-          )}
+          <ErrorBoundary>
+            <LoginUserContext.Provider value={contextInfo}>
+              <Header />
+              {isUserLoggedIn ? (
+                <AuthenticatedApp
+                  logoutUser={this.logoutUser}
+                  updateArticle={this.updateArticle}
+                  article={this.state.article}
+                  updateUser={this.updateUser}
+                />
+              ) : (
+                <UnAuthenticatedApp
+                  updateUser={this.updateUser}
+                  article={this.state.article}
+                />
+              )}
+            </LoginUserContext.Provider>
+          </ErrorBoundary>
         </React.StrictMode>
       </>
     );
@@ -100,25 +105,22 @@ function AuthenticatedApp(props) {
   return (
     <Switch>
       <Route path='/' exact>
-        <Home isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+        <Home />
       </Route>
-      <Route path='/newPost'>
-        <NewPost isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+      <Route path='/newPost' exact>
+        <NewPost />
       </Route>
-      <Route path='/setting'>
-        <Settings user={props.user} logoutUser={props.logoutUser} />
+      <Route path='/setting' exact>
+        <Settings logoutUser={props.logoutUser} updateUser={props.updateUser} />
       </Route>
       <Route path='/profile/:username' exact>
-        <Profile isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+        <Profile />
       </Route>
-      <Route path='/article/edit/:slug'>
-        <UpdatePost isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+      <Route path='/article/edit/:slug' exact>
+        <UpdatePost />
       </Route>
-      <Route path='/article/:slug'>
-        <SingleArticle
-          isUserLoggedIn={props.isUserLoggedIn}
-          user={props.user}
-        />
+      <Route path='/article/:slug' exact>
+        <SingleArticle />
       </Route>
       <Route path='*'>
         <NotFound />
@@ -131,7 +133,7 @@ function UnAuthenticatedApp(props) {
   return (
     <Switch>
       <Route path='/' exact>
-        <Home isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+        <Home />
       </Route>
       <Route path='/login'>
         <Signin updateUser={props.updateUser} />
@@ -140,13 +142,10 @@ function UnAuthenticatedApp(props) {
         <Signup updateUser={props.updateUser} />
       </Route>
       <Route path='/profile/:username'>
-        <Profile isUserLoggedIn={props.isUserLoggedIn} user={props.user} />
+        <Profile />
       </Route>
       <Route path='/article/:slug'>
-        <SingleArticle
-          isUserLoggedIn={props.isUserLoggedIn}
-          user={props.user}
-        />
+        <SingleArticle />
       </Route>
       <Route path='*'>
         <NotFound />

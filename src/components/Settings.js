@@ -1,7 +1,11 @@
 import React from 'react';
 import { withRouter } from 'react-router';
+
 import { userVerifyURL } from '../utils/constant';
 import validate from '../utils/validate';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+import Error from './Error';
+
 class Settings extends React.Component {
   constructor(props) {
     super(props);
@@ -16,45 +20,20 @@ class Settings extends React.Component {
         email: '',
         password: '',
       },
+      error: '',
     };
+    this.contextInfo = null;
   }
 
   componentDidMount() {
-    this.getProfile();
+    let { email, username, image, bio } = this.contextInfo.user;
+    this.setState({ email, username, image, bio, password: '' });
   }
-
-  getProfile = () => {
-    let token = this.props.user.token;
-    fetch(userVerifyURL, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Token ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then(({ errors }) => {
-            return Promise.reject(errors);
-          });
-        }
-        return res.json();
-      })
-      .then((profile) => {
-        this.setState({
-          email: profile.user.email || '',
-          username: profile.user.username || '',
-          image: profile.user.image || '',
-          bio: profile.user.bio || '',
-        });
-      })
-      .catch((error) => console.log(error));
-  };
 
   handleSubmit = (event) => {
     event.preventDefault();
     let { username, email, image, bio, password, errors } = this.state;
-    let token = this.props.user.token;
+    let token = this.contextInfo.user.token;
 
     if (!errors.username && !errors.email && !errors.password) {
       fetch(userVerifyURL, {
@@ -79,6 +58,7 @@ class Settings extends React.Component {
           return res.json();
         })
         .then((profile) => {
+          this.props.updateUser(profile.user);
           this.props.history.push('/');
           this.setState({
             email: '',
@@ -87,7 +67,7 @@ class Settings extends React.Component {
             bio: '',
           });
         })
-        .catch((error) => console.log(error));
+        .catch((error) => this.setState({ error: '' }));
     }
   };
 
@@ -98,8 +78,12 @@ class Settings extends React.Component {
     this.setState({ [name]: value, errors });
   };
 
+  static contextType = LoginUserContext;
+
   render() {
+    this.contextInfo = this.context;
     let { username, email, bio, password, image, errors } = this.state;
+    if (this.state.error) return <Error error={this.state.error} />;
     return (
       <div className='setting'>
         <form className='settings-from' onSubmit={this.handleSubmit}>

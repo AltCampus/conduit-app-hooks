@@ -1,7 +1,10 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { articlesURL } from '../utils/constant';
+
 import Error from './Error';
+import { articlesURL } from '../utils/constant';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+
 class NewPost extends React.Component {
   constructor(props) {
     super(props);
@@ -18,6 +21,7 @@ class NewPost extends React.Component {
         description: '',
       },
     };
+    this.contextInfo = null;
   }
 
   handleChange = (event) => {
@@ -34,7 +38,7 @@ class NewPost extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     let { title, body, description, tagList, errors } = this.state;
-    let token = this.props.user.token;
+    let token = this.contextInfo.user.token;
     if (title && body && description && tagList) {
       tagList = tagList.split(',').map((tag) => tag.trim());
       fetch(articlesURL, {
@@ -83,12 +87,16 @@ class NewPost extends React.Component {
     }
   };
 
+  static contextType = LoginUserContext;
+
   render() {
+    this.contextInfo = this.context;
     let { title, body, tagList, description, errors, error } = this.state;
     if (error) return <Error error={error} />;
     return (
       <div className='new-post'>
         <form className='new-post-form' onSubmit={this.handleSubmit}>
+          <h2 className='setting-heading'>Add New Article</h2>
           <input
             onChange={this.handleChange}
             className='input-article-title'

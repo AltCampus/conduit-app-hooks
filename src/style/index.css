@@ -218,19 +218,20 @@ header {
 }
 
 .logo {
-  color: rgb(89, 172, 89);
+  color: rgb(133, 193, 208);
   font-size: 1.5rem;
   font-weight: 600;
 }
 .nav-link {
   font-size: 1rem;
-  color: rgb(192, 192, 192);
+  font-weight: 600;
+  color: rgb(182, 182, 182);
 }
 .nav-link:hover {
-  color: gray;
+  color: rgb(110, 110, 110);
 }
 .active {
-  color: grey;
+  color: rgb(77, 76, 76);
 }
 .header-user-img {
   width: 20px;
@@ -252,14 +253,14 @@ header {
 
 /* Hero */
 
-#hero-section {
+/* #hero-section {
   background-color: rgb(89, 172, 89);
   padding: 2rem;
-}
+} */
 .hero-heading,
 .hero-subheading {
   font-size: 3.5rem;
-  color: white;
+  color: rgb(29, 29, 29);
   font-weight: 600;
   text-align: center;
 }
@@ -325,6 +326,7 @@ header {
   color: red;
   margin: 5px;
   margin-top: 10px;
+  font-size: 1.1rem;
 }
 
 /* Main */
@@ -501,11 +503,11 @@ header {
 
 #single-art-hero {
   padding: 2rem;
-  background-color: rgb(36, 35, 36);
+  background-color: rgb(166, 211, 221);
 }
 
 #hero-section {
-  background-color: rgb(89, 172, 89);
+  background-color: rgb(166, 211, 221);
   padding: 2rem;
 }
 .single-art-heading,
@@ -520,7 +522,7 @@ header {
   font-weight: 400;
 }
 .author-single-art {
-  color: white;
+  color: rgb(95, 95, 95);
 }
 .single-art-description {
   font-size: 1.3rem;
@@ -599,6 +601,7 @@ header {
   color: rgb(70, 69, 69);
   font-weight: 500;
   text-align: center;
+  margin-bottom: 2rem;
 }
 .setting {
   width: 50%;
@@ -630,7 +633,7 @@ header {
 
 #user-profile-hero-section {
   padding: 1rem;
-  background-color: rgb(244, 244, 244);
+  background-color: rgb(223, 243, 248);
   padding-bottom: 4rem;
 }
 .user-profile-image {
@@ -734,8 +737,8 @@ header {
 
 .edit-article {
   padding: 0.5rem 1rem;
-  color: rgb(198, 197, 197);
-  border: 2px solid rgb(204, 203, 203);
+  color: rgb(114, 114, 114);
+  border: 2px solid rgb(114, 114, 114);
   background-color: transparent;
 }
 
@@ -759,4 +762,35 @@ header {
   outline: none;
   font-size: 1rem;
   font-weight: 800;
+}
+
+/* Error Message */
+
+.err-msg-heading {
+  font-size: 2rem;
+  text-align: center;
+  color: red;
+}
+.error-holder {
+  width: 80%;
+  margin: 2rem auto;
+}
+.home-btn {
+  padding: 0.5rem 1rem;
+  border: gray;
+  background-color: rgb(166, 211, 221);
+  color: black;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  display: block;
+  width: fit-content;
+  margin: 2rem auto;
+  font-size: 1.3rem;
+  color: green;
+  font-weight: 600;
+}
+.home-btn button {
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
 }

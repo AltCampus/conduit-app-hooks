@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Article from './Article';
 import Loading from './Loading';
 
@@ -14,7 +15,6 @@ function Posts(props) {
           <Article
             key={article.slug}
             article={article}
-            user={props.user}
             likeArticle={props.likeArticle}
           />
         );

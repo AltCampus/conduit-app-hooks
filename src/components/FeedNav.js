@@ -1,7 +1,11 @@
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+
 function FeedNav(props) {
-  let isUserLoggedIn = props.isUserLoggedIn;
+  const userContext = useContext(LoginUserContext);
+  let isUserLoggedIn = userContext.isUserLoggedIn;
   return (
     <div className='feed-toggle'>
       <ul className='flex gap-1'>

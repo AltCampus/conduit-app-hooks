@@ -1,15 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+
 import Loading from './Loading';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
 
 class Article extends React.Component {
+  constructor(props) {
+    super(props);
+    this.contextInfo = null;
+  }
+
   updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();
   };
 
+  static contextType = LoginUserContext;
+
   render() {
+    this.contextInfo = this.context;
     let article = this.props.article;
     if (!article.author) return <Loading />;
     return (

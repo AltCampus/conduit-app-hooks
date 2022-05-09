@@ -1,11 +1,13 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+
 import Error from './Error';
 import Posts from './Posts';
 import Sidebar from './Sidebar';
 import FeedNav from './FeedNav';
 import Pagination from './Pagination';
 import { articlesURL, feedURL, singleArticleURL } from '../utils/constant';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
 
 class Home extends React.Component {
   constructor(props) {
@@ -19,6 +21,7 @@ class Home extends React.Component {
       feedSelected: '',
       error: '',
     };
+    this.contextInfo = null;
   }
 
   emptyTab = () => {
@@ -30,13 +33,13 @@ class Home extends React.Component {
   };
 
   changeFeedSelected = (val) => {
-    this.setState({ feedSelected: val }, () => {
+    this.setState({ feedSelected: val, activePageIndex: 1 }, () => {
       this.state.feedSelected === 'myFeed' ? this.myFeed() : this.getArticles();
     });
   };
 
   componentDidMount() {
-    let isLoggedIn = this.props.isUserLoggedIn;
+    let isLoggedIn = this.contextInfo.isUserLoggedIn;
     if (isLoggedIn) {
       this.setState({ feedSelected: 'myFeed' }, this.myFeed());
     } else {
@@ -49,8 +52,8 @@ class Home extends React.Component {
       this.getArticles();
     }
     if (
-      !this.props.isUserLoggedIn &&
-      _prevProps.isUserLoggedIn !== this.props.isUserLoggedIn
+      !this.contextInfo.isUserLoggedIn &&
+      _prevProps.isUserLoggedIn !== this.contextInfo.isUserLoggedIn
     ) {
       this.getArticles();
     }
@@ -60,7 +63,7 @@ class Home extends React.Component {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
     let tag = this.state.activeTag;
-    let token = this.props.user ? this.props.user.token : '';
+    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
     fetch(
       articlesURL +
         `/?offset=${offset}&limit=${limit}` +
@@ -92,8 +95,7 @@ class Home extends React.Component {
   myFeed = () => {
     let limit = this.state.articlesPerPage;
     let offset = (this.state.activePageIndex - 1) * 10;
-    let token = this.props.user.token;
-    console.log('My Feed');
+    let token = this.contextInfo.user.token;
     fetch(feedURL + `/?offset=${offset}&limit=${limit}`, {
       method: 'GET',
       headers: {
@@ -127,9 +129,9 @@ class Home extends React.Component {
   };
 
   likeArticle = (favourted, slug) => {
-    let isUserLoggedIn = this.props.isUserLoggedIn;
+    let isUserLoggedIn = this.contextInfo.isUserLoggedIn;
     let method = favourted === true ? 'DELETE' : 'POST';
-    let token = this.props.user ? this.props.user.token : '';
+    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
     if (isUserLoggedIn) {
       fetch(`${singleArticleURL}/${slug}/favorite`, {
         method: method,
@@ -156,6 +158,8 @@ class Home extends React.Component {
     }
   };
 
+  static contextType = LoginUserContext;
+
   render() {
     let {
       articles,
@@ -165,6 +169,9 @@ class Home extends React.Component {
       activeTag,
       error,
     } = this.state;
+
+    this.contextInfo = this.context;
+
     if (error) return <Error error={error} />;
     return (
       <main>
@@ -178,11 +185,9 @@ class Home extends React.Component {
                   emptyTab={this.emptyTab}
                   changeFeedSelected={this.changeFeedSelected}
                   feedSelected={this.state.feedSelected}
-                  isUserLoggedIn={this.props.isUserLoggedIn}
                 />
                 <Posts
                   articles={articles || []}
-                  user={this.props.user}
                   likeArticle={this.likeArticle}
                 />
                 {articlesCount > 10 ? (
@@ -208,7 +213,7 @@ class Home extends React.Component {
 function Banner() {
   return (
     <section id='hero-section'>
-      <h1 className='hero-heading'>conduit</h1>
+      <h1 className='hero-heading'>Blog App</h1>
       <h2 className='hero-subheading'>A place to share your knowledge.</h2>
     </section>
   );

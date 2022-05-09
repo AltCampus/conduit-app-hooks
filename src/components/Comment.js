@@ -2,7 +2,10 @@ import React from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { AiOutlineUser } from 'react-icons/ai';
 
+import Loading from './Loading';
 import { singleArticleURL } from '../utils/constant';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+import Error from './Error';
 
 class Comment extends React.Component {
   constructor(props) {
@@ -12,6 +15,7 @@ class Comment extends React.Component {
       commentInput: '',
       error: '',
     };
+    this.contextInfo = null;
   }
 
   handleChange = (event) => {
@@ -24,7 +28,7 @@ class Comment extends React.Component {
   }
 
   getComments = () => {
-    let token = this.props.user ? this.props.user.token : '';
+    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
     fetch(singleArticleURL + this.props.slug + '/comments', {
       method: 'GET',
       headers: {
@@ -48,7 +52,7 @@ class Comment extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let token = this.props.user.token;
+    let token = this.contextInfo.user.token;
     let { commentInput } = this.state;
     fetch(singleArticleURL + this.props.slug + '/comments', {
       method: 'POST',
@@ -75,7 +79,7 @@ class Comment extends React.Component {
   };
 
   handleDeleteComment = (id) => {
-    let token = this.props.user.token;
+    let token = this.contextInfo.user.token;
     fetch(singleArticleURL + this.props.slug + '/comments/' + id, {
       method: 'DELETE',
       headers: {
@@ -84,10 +88,9 @@ class Comment extends React.Component {
     })
       .then((res) => {
         if (res.status !== 204) {
-          throw new Error('Article didnot delete');
+          throw new Error('Comment did not delete');
         }
         this.getComments();
-        // return res.json();
       })
       .catch((error) => {
         this.setState({ error }, this.getComments);
@@ -99,11 +102,19 @@ class Comment extends React.Component {
     return newDate.toDateString();
   };
 
+  static contextType = LoginUserContext;
+
   render() {
+    this.contextInfo = this.context;
+    if (!this.contextInfo) return <Loading />;
+    if (this.state.error) return <Error error={this.state.error} />;
     return (
       <>
         <div className='comment-box-holder'>
-          <form onSubmit={this.handleSubmit} className='comment-form'>
+          <form
+            onSubmit={(event) => this.handleSubmit(event)}
+            className='comment-form'
+          >
             <div>
               <textarea
                 onChange={this.handleChange}
@@ -115,16 +126,16 @@ class Comment extends React.Component {
             </div>
             <div className='flex space-btw post-comment-holder'>
               <div className='comment-user-info flex align-center'>
-                {this.props.user.image ? (
+                {this.contextInfo.user.image ? (
                   <img
                     className='header-user-img'
-                    src={this.props.user.image}
-                    alt={this.props.user.username}
+                    src={this.contextInfo.user.image}
+                    alt={this.contextInfo.user.username}
                   />
                 ) : (
                   <AiOutlineUser className='margin-rigth-5' />
                 )}
-                {this.props.user.username}
+                {this.contextInfo.user.username}
               </div>
               <input
                 type='submit'
@@ -152,9 +163,10 @@ class Comment extends React.Component {
                     </h3>
                     <h3>{this.updatedDate(comment.createdAt)}</h3>
                   </div>
-                  {comment.author.username === this.props.user.username ? (
+                  {comment.author.username ===
+                  this.contextInfo.user.username ? (
                     <button
-                      onClick={() => this.handleDeleteComment(comment.id)}
+                      onClick={(event) => this.handleDeleteComment(comment.id)}
                       className='pointer delete-comment'
                     >
                       <BiTrash />

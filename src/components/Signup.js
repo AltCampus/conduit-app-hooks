@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
+
 import validate from '../utils/validate';
 import { signUpURL } from '../utils/constant';
 class Signup extends React.Component {

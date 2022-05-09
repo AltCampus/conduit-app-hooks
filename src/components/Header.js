@@ -1,30 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { AiFillSetting, AiOutlineUser } from 'react-icons/ai';
 import { GiNotebook } from 'react-icons/gi';
 
-function Header(props) {
+import LoginUserContext from '../ContextAPI/LoginUserContext';
+
+function Header() {
+  const contextInfo = useContext(LoginUserContext);
   return (
     <header>
       <div className='container flex space-btw align-center'>
         <div className='logo-holder'>
           <Link className='logo' to='/'>
-            conduit
+            BLOG
           </Link>
         </div>
         <nav>
-          {props.isUserLoggedIn ? (
-            <AuthHeader user={props.user} />
-          ) : (
-            <NotAuthHeader />
-          )}
+          {contextInfo.isUserLoggedIn ? <AuthHeader /> : <NotAuthHeader />}
         </nav>
       </div>
     </header>
   );
 }
 
-function AuthHeader(props) {
+function AuthHeader() {
+  const contextInfo = useContext(LoginUserContext);
   return (
     <ol className='flex gap-2 align-center'>
       <li>
@@ -33,7 +33,11 @@ function AuthHeader(props) {
         </NavLink>
       </li>
       <li>
-        <NavLink to='/newPost' className='nav-link' activeclassname='active'>
+        <NavLink
+          to='/newPost'
+          className='nav-link flex align-center'
+          activeclassname='active'
+        >
           <GiNotebook className='margin-rigth-5' />
           New Article
         </NavLink>
@@ -50,20 +54,20 @@ function AuthHeader(props) {
       </li>
       <li>
         <NavLink
-          to={`/profile/${props.user.username}`}
+          to={`/profile/${contextInfo.user.username}`}
           className='nav-link flex align-center'
           activeclassname='active'
         >
-          {props.user.image ? (
+          {contextInfo.user.image ? (
             <img
               className='header-user-img'
-              src={props.user.image}
+              src={contextInfo.user.image}
               alt='user-profile'
             />
           ) : (
             <AiOutlineUser className='margin-rigth-5' />
           )}
-          {props.user.username}
+          {contextInfo.user.username}
         </NavLink>
       </li>
     </ol>

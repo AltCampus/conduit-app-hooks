@@ -1,7 +1,9 @@
 import React from 'react';
-import { tagsURL } from '../utils/constant';
+
 import Error from './Error';
 import Loading from './Loading';
+import { tagsURL } from '../utils/constant';
+
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -28,6 +30,7 @@ class Sidebar extends React.Component {
       })
       .catch((error) => this.setState({ error }));
   };
+
   render() {
     let { tags, error } = this.state;
     if (tags) {

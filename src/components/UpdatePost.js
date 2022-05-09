@@ -1,7 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { singleArticleURL } from '../utils/constant';
+
 import Error from './Error';
+import { singleArticleURL } from '../utils/constant';
+import LoginUserContext from '../ContextAPI/LoginUserContext';
 
 class UpdatePost extends React.Component {
   constructor(props) {
@@ -19,6 +21,7 @@ class UpdatePost extends React.Component {
         description: '',
       },
     };
+    this.contextInfo = null;
   }
 
   componentDidMount() {
@@ -59,7 +62,7 @@ class UpdatePost extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     let { title, body, description, tagList, errors } = this.state;
-    let token = this.props.user.token;
+    let token = this.contextInfo.user.token;
     let slug = this.props.match.params.slug;
     if (title && body && description && tagList) {
       if (typeof tagList === 'string') {
@@ -111,7 +114,11 @@ class UpdatePost extends React.Component {
     }
   };
 
+  static contextType = LoginUserContext;
+
   render() {
+    this.contextInfo = this.context;
+
     let { title, body, tagList, description, errors, error } = this.state;
     if (error) return <Error error={error} />;
     return (

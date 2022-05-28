@@ -2,11 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 class ErrorBoundary extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = { hasError: false, error: null, errorInfo: null };
-  // }
-
   state = {
     error: null,
     errorInfo: null,
@@ -14,18 +9,7 @@ class ErrorBoundary extends React.Component {
   };
 
   static getDerivedStateFromError(error) {
-    console.log(error, 'getDerivedStateFromError');
-
     return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.log(error, 'componentDidCatch');
-
-    this.setState({
-      error: error,
-      errorInfo: errorInfo,
-    });
   }
 
   render() {
@@ -33,9 +17,7 @@ class ErrorBoundary extends React.Component {
       return (
         <div className='error-holder'>
           <h1 className='err-msg err-msg-heading'>SomeThing Went Wrong</h1>
-          {/* <Redirect push to="/" className='home-btn'>
-            <button>Home</button>
-          </Redirect> */}
+          <h1 className='err-msg err-msg-heading'>Please Refresh Page</h1>
           <Link push to='/' className='home-btn'>
             <button>Home</button>
           </Link>

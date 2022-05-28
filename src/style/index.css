@@ -218,7 +218,7 @@ header {
 }
 
 .logo {
-  color: rgb(133, 193, 208);
+  color: rgb(44, 175, 207);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -260,7 +260,7 @@ header {
 .hero-heading,
 .hero-subheading {
   font-size: 3.5rem;
-  color: rgb(29, 29, 29);
+  color: rgb(17, 164, 201);
   font-weight: 600;
   text-align: center;
 }
@@ -325,7 +325,8 @@ header {
 .err-msg {
   color: red;
   margin: 5px;
-  margin-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
   font-size: 1.1rem;
 }
 
@@ -339,8 +340,8 @@ header {
 .global-feed {
   cursor: pointer;
   color: gray;
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
 }
 .feed-toggle::after {
   content: '';
@@ -351,14 +352,12 @@ header {
 }
 .row {
   margin-top: 1rem;
-  padding: 0 1rem;
 }
 .feed {
   width: 69%;
-  padding: 0 1rem;
 }
 .tags {
-  width: 30%;
+  width: 29.5%;
   background-color: rgb(223, 242, 247);
   border-radius: 5px;
   height: fit-content;
@@ -418,45 +417,39 @@ header {
 
 .author-img {
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
 }
 .likes-count-holder {
   padding: 0px 10px;
   border-radius: 5px;
-  border: 1px solid rgb(99, 173, 99);
   display: flex;
   align-items: center;
   gap: 0.2rem;
   cursor: pointer;
 }
-.likes-count-holder:hover {
-  background-color: rgb(99, 173, 99);
-}
-
-.likes-count-holder:hover .likes,
-.heart {
-  color: white;
-}
-.likes-count-holder:hover .heart {
-  color: white;
-}
-.likes,
-.heart {
-  font-size: 0.8rem;
+.likes {
   color: rgb(99, 173, 99);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.heart {
+  color: rgb(99, 173, 99);
+  font-size: 1.3rem;
 }
 .author-name {
   color: rgb(99, 173, 99);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin-bottom: 5px;
+  font-weight: 600;
 }
 .date {
-  color: rgb(143, 142, 142);
+  color: rgb(105, 105, 105);
+  font-weight: 600;
 }
 .article-title {
   font-size: 1.7rem;
-  color: rgb(105, 105, 105);
+  color: rgb(68, 68, 68);
   font-weight: 500;
   margin-bottom: 0.5rem;
   cursor: pointer;
@@ -464,10 +457,11 @@ header {
   border: none;
   background-color: transparent;
   text-align: start;
+  display: block;
 }
 .article-description {
   font-size: 1rem;
-  color: rgb(105, 105, 105);
+  color: rgb(143, 143, 143);
   cursor: pointer;
   width: fit-content;
   border: none;
@@ -476,24 +470,31 @@ header {
 .read-more {
   border: none;
   background-color: transparent;
-  color: rgb(192, 192, 192);
+  color: rgb(28, 133, 212);
   cursor: pointer;
+  font-weight: 600;
 }
 .test {
-  background-color: rgb(247, 247, 247);
-  border: 1px solid rgb(201, 201, 201);
-  padding: 5px 10px;
-  border-radius: 10px;
-  color: gray;
+  background-color: rgb(185, 219, 227);
   cursor: pointer;
+  font-weight: 600;
+  border: none;
+}
+.test:hover {
+  border: none;
 }
 .single-article::after {
   content: '';
   display: block;
   width: 100%;
-  border-bottom: 2px solid rgb(236, 236, 236);
   margin-top: 0.6rem;
   margin-bottom: 1rem;
+}
+.single-article {
+  background-color: rgb(233, 233, 233);
+  padding: 1rem;
+  margin-top: 10px;
+  border-radius: 10px;
 }
 .feed-list-holder {
   margin-top: 1.5rem;
@@ -530,17 +531,14 @@ header {
   margin-top: 2rem;
 }
 .single-art-tag {
-  color: lightgray;
   border-radius: 30px;
-  border: 1px solid lightgray;
-  padding: 3px 10px;
+  padding: 10px 20px;
   width: fit-content;
   margin: 3rem 0;
 }
 .single-art-holder::after {
   content: '';
   display: block;
-  /* width: 100%; */
   border-bottom: 2px solid rgb(221, 221, 221);
   margin-top: 0.6rem;
 }
@@ -553,52 +551,46 @@ header {
 .new-post-form {
   width: 80%;
   margin: 3rem auto;
-  padding: 1rem;
+  padding: 2rem;
+  border-radius: 10px;
 }
-.input-article-body {
-  width: 100%;
+.input-article {
+  width: 80%;
+  margin: 2rem auto;
   display: block;
   padding: 10px;
   font-size: 1rem;
   margin-bottom: 1rem;
-  border: 1px solid rgb(215, 215, 215);
+  border: none;
+  border-bottom: 1px solid rgb(190, 189, 189);
 }
-
-.input-article-title {
-  width: 100%;
-  display: block;
-  padding: 10px;
-  font-size: 1.3rem;
-  border: 1px solid rgb(215, 215, 215);
-
-  margin-bottom: 1rem;
+.input-article:focus {
+  outline: none;
+}
+.new-article-err-msg {
+  width: 80%;
+  margin: 1rem auto;
 }
 .input-article-description {
-  width: 100%;
   height: 100px;
-  margin-bottom: 1rem;
-  border: 1px solid rgb(215, 215, 215);
-  padding: 10px;
-  font-size: 1rem;
-  display: block;
 }
 .publish-article {
-  padding: 1rem 2rem;
-  background-color: green;
+  padding: 1rem 4rem;
+  background-color: rgb(58, 133, 58);
   border: none;
   color: white;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 10px;
   display: block;
-  float: right;
+  margin: 2rem auto;
 }
 
 /* Setting */
 
 .setting-heading {
   font-size: 2.5rem;
-  color: rgb(70, 69, 69);
+  color: rgb(14, 95, 158);
   font-weight: 500;
   text-align: center;
   margin-bottom: 2rem;
@@ -623,6 +615,7 @@ header {
   margin-top: 5rem;
   border-radius: 10px;
   cursor: pointer;
+  margin-left: 4rem;
 }
 .logout-btn:hover {
   background-color: tomato;
@@ -648,6 +641,8 @@ header {
   font-size: 1.1rem;
   text-align: center;
   margin-top: 1rem;
+  color: rgb(28, 133, 212);
+  font-weight: 600;
 }
 .user-profile-name {
   font-size: 1.5rem;
@@ -655,9 +650,9 @@ header {
   text-align: center;
 }
 .follow-user {
-  background-color: rgb(196, 195, 196);
+  background-color: rgb(38, 165, 74);
   padding: 10px;
-  color: rgb(95, 95, 94);
+  color: rgb(249, 249, 247);
   font-weight: 500;
   border-radius: 2px;
   font-size: 0.9rem;
@@ -665,6 +660,15 @@ header {
   margin-right: 2rem;
   float: right;
   cursor: pointer;
+  border-radius: 10px;
+  border: none;
+}
+.unfollow {
+  background-color: rgb(160, 64, 8);
+}
+.user-setting {
+  background-color: rgb(64, 158, 235);
+  font-weight: 600;
 }
 .follow-user svg {
   margin-right: 5px;
@@ -679,9 +683,13 @@ header {
 
 /* Add comment */
 
+.comment-form {
+  border-radius: 10px;
+}
 .post-comment-holder {
   padding: 1rem;
   background-color: rgb(236, 235, 235);
+  border-radius: 8px;
 }
 .comment-box-holder,
 .comment-list-holder {
@@ -697,6 +705,7 @@ header {
   padding: 1rem;
   font-size: 1.1rem;
   border: none;
+  border-radius: 10px;
 }
 .commentInput:focus {
   outline: none;
@@ -750,7 +759,7 @@ header {
 }
 
 .unFollow-user {
-  background-color: rgb(230, 229, 230);
+  background-color: tomato;
 }
 .ion-android-favorite,
 .ion-android-favorite-outline {

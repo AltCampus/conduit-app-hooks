@@ -1,4 +1,4 @@
-export default function validate(errors, name, value) {
+export default function validate(errors, name, value, data, setData) {
   switch (name) {
     case 'email':
       let emailError = '';
@@ -13,10 +13,10 @@ export default function validate(errors, name, value) {
     case 'username':
       let usernameError = '';
       if (value.length < 6) {
-        usernameError = 'username should contain 6 charachter';
+        usernameError = 'Username should contain 6 charachter';
       }
       if (!value) {
-        usernameError = 'Email cant be empty';
+        usernameError = "UserName can't be empty";
       }
       errors.username = usernameError;
       break;
@@ -32,6 +32,7 @@ export default function validate(errors, name, value) {
         passwordError = 'Password should contain atleast 6 character';
       }
       errors.password = passwordError;
+
       break;
     default:
       break;

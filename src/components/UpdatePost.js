@@ -1,175 +1,151 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router';
 
 import Error from './Error';
 import { singleArticleURL } from '../utils/constant';
-import LoginUserContext from '../ContextAPI/LoginUserContext';
+import Loading from './Loading';
+import useFetch from '../customHooks/useFetch';
 
-class UpdatePost extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: '',
-      body: '',
-      tagList: [],
-      description: '',
-      error: '',
-      errors: {
+function UpdatePost(props) {
+  const initialArticle = {
+    title: '',
+    body: '',
+    tagList: [],
+    description: '',
+    error: '',
+  };
+
+  const initialError = {
+    title: '',
+    body: '',
+    tagList: '',
+    description: '',
+  };
+
+  const [articleInfo, setArticleInfo] = useState(initialArticle);
+  const [error, setError] = useState(initialError);
+
+  const { makeApiCall, error: fetchError, isLoading } = useFetch();
+
+  useEffect(() => {
+    fetchArticle(singleArticleURL + props.match.params.slug, 'GET');
+  }, []);
+
+  const fetchArticle = async (url, method, body) => {
+    let { article } = await makeApiCall(url, method, body);
+    if (method === 'GET') {
+      setArticleInfo({
+        title: article.title,
+        body: article.body,
+        description: article.description,
+        tagList: article.tagList,
+        error: '',
+      });
+    } else {
+      setArticleInfo({
         title: '',
         body: '',
-        tagList: '',
         description: '',
-      },
-    };
-    this.contextInfo = null;
-  }
-
-  componentDidMount() {
-    this.getArticle(this.props.match.params.slug);
-  }
-
-  getArticle = (slug) => {
-    fetch(singleArticleURL + slug)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
-      .then(({ article }) => {
-        this.setState({
-          title: article.title,
-          body: article.body,
-          description: article.description,
-          tagList: article.tagList,
-          error: '',
-        });
-      })
-      .catch((err) => this.setState({ error: err }));
-  };
-
-  handleChange = (event) => {
-    let { name, value } = event.target;
-    let { errors } = this.state;
-    if (!value) {
-      errors[name] = "Can't be empty";
-    } else {
-      errors[name] = '';
+        tagList: '',
+        error: '',
+      });
+      props.history.push('/article/' + article.slug);
     }
-    this.setState({ [name]: value, errors });
   };
 
-  handleSubmit = (event) => {
+  const handleChange = (event) => {
+    let { name, value } = event.target;
+    if (!value) {
+      setError({ ...error, [name]: "Can't be empty" });
+    } else {
+      setError({ ...error, [name]: '' });
+    }
+    setArticleInfo({ ...articleInfo, [name]: value });
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-    let { title, body, description, tagList, errors } = this.state;
-    let token = this.contextInfo.user.token;
-    let slug = this.props.match.params.slug;
+    let { title, body, description, tagList, error } = articleInfo;
+    let slug = props.match.params.slug;
     if (title && body && description && tagList) {
       if (typeof tagList === 'string') {
         tagList = tagList.split(',').map((tag) => tag.trim());
       }
-      fetch(singleArticleURL + slug, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Token ${token}`,
-        },
-        body: JSON.stringify({
-          article: { title, body, description, tagList },
-        }),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('Can not create new article');
-          }
-          return res.json();
-        })
-        .then((article) => {
-          this.setState({ title: '', body: '', description: '', tagList: '' });
-          this.props.history.push('/article/' + article.article.slug);
-        })
-        .catch((errors) => {
-          this.setState({
-            title: '',
-            description: '',
-            body: '',
-            tagList: '',
-            error: errors,
-          });
-        });
+      fetchArticle(
+        singleArticleURL + slug,
+        'PUT',
+        JSON.stringify({ article: { title, body, description, tagList } })
+      );
     } else {
       if (!title) {
-        errors.title = "Title Can't be Empty";
+        error.title = "Title Can't be Empty";
       }
       if (!body) {
-        errors.body = "Body Can't be Empty";
+        error.body = "Body Can't be Empty";
       }
       if (!description) {
-        errors.description = "Description Can't be Empty";
+        error.description = "Description Can't be Empty";
       }
       if (!tagList) {
-        errors.tagList = "TagList Can't be Empty";
+        error.tagList = "TagList Can't be Empty";
       }
-      this.setState({ errors });
+      setError({ ...error });
     }
   };
 
-  static contextType = LoginUserContext;
+  let { title, body, tagList, description } = articleInfo;
 
-  render() {
-    this.contextInfo = this.context;
+  if (fetchError) return <Error error={fetchError} />;
+  if (isLoading) return <Loading />;
 
-    let { title, body, tagList, description, errors, error } = this.state;
-    if (error) return <Error error={error} />;
-    return (
-      <div className='new-post'>
-        <form className='new-post-form' onSubmit={this.handleSubmit}>
-          <input
-            onChange={this.handleChange}
-            className='input-article-title'
-            name='title'
-            type='text'
-            placeholder='Article Title'
-            value={title}
-          />
-          <h2 className='err-msg'>{errors.title ? errors.title : ''}</h2>
-          <input
-            name='body'
-            className='input-article-body'
-            type='text'
-            onChange={this.handleChange}
-            placeholder={`What's this article about?`}
-            value={body}
-          />
-          <h2 className='err-msg'>{errors.body ? errors.body : ''}</h2>
-          <textarea
-            name='description'
-            onChange={this.handleChange}
-            className='input-article-description'
-            value={description}
-            placeholder={`Write your article (in markdown)`}
-          ></textarea>
-          <h2 className='err-msg'>
-            {errors.description ? errors.description : ''}
-          </h2>
-          <input
-            name='tagList'
-            type='text'
-            className='input-article-body'
-            placeholder='Enter Tags'
-            value={tagList}
-            onChange={this.handleChange}
-          />
-          <h2 className='err-msg'>{errors.tagList ? errors.tagList : ''}</h2>
-          <input
-            type='submit'
-            value='Update Article'
-            className='publish-article pointer'
-          />
-        </form>
-      </div>
-    );
-  }
+  return (
+    <div className='new-post'>
+      <form className='new-post-form' onSubmit={handleSubmit}>
+        <input
+          onChange={handleChange}
+          className='input-article input-article-title'
+          name='title'
+          type='text'
+          placeholder='Article Title'
+          value={title}
+        />
+        <h2 className='err-msg'>{error.title ? error.title : ''}</h2>
+        <input
+          name='body'
+          className='input-article input-article-body'
+          type='text'
+          onChange={handleChange}
+          placeholder={`What's this article about?`}
+          value={body}
+        />
+        <h2 className='err-msg'>{error.body ? error.body : ''}</h2>
+        <textarea
+          name='description'
+          onChange={handleChange}
+          className='input-article  input-article-description'
+          value={description}
+          placeholder={`Write your article (in markdown)`}
+        ></textarea>
+        <h2 className='err-msg'>
+          {error.description ? error.description : ''}
+        </h2>
+        <input
+          name='tagList'
+          type='text'
+          className='input-article  input-article-body'
+          placeholder='Enter Tags'
+          value={tagList}
+          onChange={handleChange}
+        />
+        <h2 className='err-msg'>{error.tagList ? error.tagList : ''}</h2>
+        <input
+          type='submit'
+          value='Update Article'
+          className='publish-article pointer'
+        />
+      </form>
+    </div>
+  );
 }
 
 export default withRouter(UpdatePost);

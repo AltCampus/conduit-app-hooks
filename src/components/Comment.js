@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { AiOutlineUser } from 'react-icons/ai';
 
@@ -6,182 +6,130 @@ import Loading from './Loading';
 import { singleArticleURL } from '../utils/constant';
 import LoginUserContext from '../ContextAPI/LoginUserContext';
 import Error from './Error';
+import useFetch from '../customHooks/useFetch';
 
-class Comment extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      comments: [],
-      commentInput: '',
-      error: '',
-    };
-    this.contextInfo = null;
-  }
+function Comment(props) {
+  const [comments, setComments] = useState([]);
+  const [commentInput, setCommentInput] = useState('');
 
-  handleChange = (event) => {
-    let { name, value } = event.target;
-    this.setState({ [name]: value });
+  const contextInfo = useContext(LoginUserContext);
+
+  let { makeApiCall, error, isLoading } = useFetch();
+
+  useEffect(() => {
+    fetchComments(singleArticleURL + props.slug + '/comments', 'GET');
+  }, []);
+
+  const fetchComments = async (url, method, body) => {
+    let response = await makeApiCall(url, method, body);
+    setComments(response.comments);
   };
 
-  componentDidMount() {
-    this.getComments();
-  }
-
-  getComments = () => {
-    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
-    fetch(singleArticleURL + this.props.slug + '/comments', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Token ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Comments didn't fetched");
-        }
-        return res.json();
-      })
-      .then(({ comments }) => {
-        this.setState({ comments });
-      })
-      .catch((error) => {
-        this.setState({ error: '' });
-      });
+  const handleComments = async (url, method, body) => {
+    let data = await makeApiCall(url, method, body);
+    fetchComments(singleArticleURL + props.slug + '/comments', 'GET');
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    let token = this.contextInfo.user.token;
-    let { commentInput } = this.state;
-    fetch(singleArticleURL + this.props.slug + '/comments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({
-        comment: { body: commentInput },
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Comments didn't fetched");
-        }
-        return res.json();
-      })
-      .then((comments) => {
-        this.setState({ commentInput: '' }, this.getComments);
-      })
-      .catch((error) => {
-        this.setState({ error: '' }, this.getComments);
-      });
+    handleComments(
+      singleArticleURL + props.slug + '/comments',
+      'POST',
+      JSON.stringify({ comment: { body: commentInput } })
+    );
+    setCommentInput('');
   };
 
-  handleDeleteComment = (id) => {
-    let token = this.contextInfo.user.token;
-    fetch(singleArticleURL + this.props.slug + '/comments/' + id, {
-      method: 'DELETE',
-      headers: {
-        authorization: `Token ${token}`,
-      },
-    })
-      .then((res) => {
-        if (res.status !== 204) {
-          throw new Error('Comment did not delete');
-        }
-        this.getComments();
-      })
-      .catch((error) => {
-        this.setState({ error }, this.getComments);
-      });
+  const handleDeleteComment = (id) => {
+    handleComments(singleArticleURL + props.slug + '/comments/' + id, 'DELETE');
   };
 
-  updatedDate = (val) => {
+  const handleChange = (event) => {
+    let { value } = event.target;
+    setCommentInput(value);
+  };
+
+  const updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();
   };
 
-  static contextType = LoginUserContext;
+  if (isLoading) return <Loading />;
 
-  render() {
-    this.contextInfo = this.context;
-    if (!this.contextInfo) return <Loading />;
-    if (this.state.error) return <Error error={this.state.error} />;
-    return (
-      <>
-        <div className='comment-box-holder'>
-          <form
-            onSubmit={(event) => this.handleSubmit(event)}
-            className='comment-form'
-          >
-            <div>
-              <textarea
-                onChange={this.handleChange}
-                name='commentInput'
-                className='commentInput'
-                placeholder='Write a comment...'
-                value={this.state.commentInput}
-              ></textarea>
+  if (error) return <Error error={error} />;
+
+  return (
+    <>
+      <div className='comment-box-holder'>
+        <form
+          onSubmit={(event) => handleSubmit(event)}
+          className='comment-form'
+        >
+          <div>
+            <textarea
+              onChange={handleChange}
+              name='commentInput'
+              className='commentInput'
+              placeholder='Write a comment...'
+              value={commentInput}
+            ></textarea>
+          </div>
+          <div className='flex space-btw post-comment-holder'>
+            <div className='comment-user-info flex align-center'>
+              {contextInfo.user.image ? (
+                <img
+                  className='header-user-img'
+                  src={contextInfo.user.image}
+                  alt={contextInfo.user.username}
+                />
+              ) : (
+                <AiOutlineUser className='margin-rigth-5' />
+              )}
+              {contextInfo.user.username}
             </div>
-            <div className='flex space-btw post-comment-holder'>
-              <div className='comment-user-info flex align-center'>
-                {this.contextInfo.user.image ? (
+            <input
+              type='submit'
+              value='Post Comment'
+              className='signin-submit post-comment pointer'
+            />
+          </div>
+        </form>
+      </div>
+      <div>
+        {comments.map((comment) => {
+          return (
+            <div key={comment.id} className='comment-list-holder'>
+              <div>
+                <p className='comment-text'>{comment.body}</p>
+              </div>
+              <div className='flex space-btw post-comment-holder'>
+                <div className='comment-user-info align-center flex gap-half'>
                   <img
-                    className='header-user-img'
-                    src={this.contextInfo.user.image}
-                    alt={this.contextInfo.user.username}
+                    src={comment.author.image}
+                    alt={comment.author.username}
                   />
+                  <h3 className='comment-username'>
+                    {comment.author.username}
+                  </h3>
+                  <h3>{updatedDate(comment.createdAt)}</h3>
+                </div>
+                {comment.author.username === contextInfo.user.username ? (
+                  <button
+                    onClick={(event) => handleDeleteComment(comment.id)}
+                    className='pointer delete-comment'
+                  >
+                    <BiTrash />
+                  </button>
                 ) : (
-                  <AiOutlineUser className='margin-rigth-5' />
+                  ''
                 )}
-                {this.contextInfo.user.username}
               </div>
-              <input
-                type='submit'
-                value='Post Comment'
-                className='signin-submit post-comment pointer'
-              />
             </div>
-          </form>
-        </div>
-        <div>
-          {this.state.comments.map((comment) => {
-            return (
-              <div key={comment.id} className='comment-list-holder'>
-                <div>
-                  <p className='comment-text'>{comment.body}</p>
-                </div>
-                <div className='flex space-btw post-comment-holder'>
-                  <div className='comment-user-info align-center flex gap-half'>
-                    <img
-                      src={comment.author.image}
-                      alt={comment.author.username}
-                    />
-                    <h3 className='comment-username'>
-                      {comment.author.username}
-                    </h3>
-                    <h3>{this.updatedDate(comment.createdAt)}</h3>
-                  </div>
-                  {comment.author.username ===
-                  this.contextInfo.user.username ? (
-                    <button
-                      onClick={(event) => this.handleDeleteComment(comment.id)}
-                      className='pointer delete-comment'
-                    >
-                      <BiTrash />
-                    </button>
-                  ) : (
-                    ''
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </>
-    );
-  }
+          );
+        })}
+      </div>
+    </>
+  );
 }
 
 export default Comment;

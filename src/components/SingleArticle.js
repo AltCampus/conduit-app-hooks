@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 import Loading from './Loading';
@@ -6,156 +6,120 @@ import Error from './Error';
 import Comment from './Comment';
 import { singleArticleURL } from '../utils/constant';
 import LoginUserContext from '../ContextAPI/LoginUserContext';
+import useFetch from '../customHooks/useFetch';
 
-class SingleArticle extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      article: null,
-      error: '',
-    };
-    this.contextInfo = null;
-  }
+function SingleArticle(props) {
+  const [article, setArticles] = useState(null);
 
-  componentDidMount() {
-    this.getArticle(this.props.match.params.slug);
-  }
+  const contextInfo = useContext(LoginUserContext);
 
-  getArticle = (slug) => {
-    fetch(singleArticleURL + slug)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        this.setState({
-          article: data.article,
-          error: '',
-        });
-      })
-      .catch((err) => this.setState({ error: err }));
+  const { makeApiCall, error: fetchError, isLoading } = useFetch();
+
+  useEffect(() => {
+    fetchArticle(singleArticleURL + props.match.params.slug, 'GET');
+  }, [props]);
+
+  const fetchArticle = async (url, method) => {
+    let data = await makeApiCall(url, method);
+    if (method === 'GET') {
+      setArticles(data.article);
+    } else {
+      props.history.push('/');
+    }
   };
 
-  handleDeleteArticle = () => {
-    let slug = this.props.match.params.slug;
-    let token = this.contextInfo.user.token;
-    fetch(singleArticleURL + slug, {
-      method: 'DELETE',
-      headers: {
-        authorization: `Token ${token}`,
-      },
-    })
-      .then((res) => {
-        if (res.status !== 204) {
-          return res.json().then(({ errors }) => {
-            return Promise.reject(errors);
-          });
-        }
-        this.props.history.push('/');
-      })
-
-      .catch((err) => this.setState({ error: err }));
+  const handleDeleteArticle = () => {
+    let slug = props.match.params.slug;
+    fetchArticle(singleArticleURL + slug, 'DELETE');
   };
 
-  handleEdit = () => {
-    let { slug } = this.state.article;
-    this.props.history.push({
+  const handleEdit = () => {
+    let { slug } = article;
+    props.history.push({
       pathname: `/article/edit/${slug}`,
     });
   };
 
-  updatedDate = (val) => {
+  const updatedDate = (val) => {
     let newDate = new Date(val);
     return newDate.toDateString();
   };
 
-  static contextType = LoginUserContext;
+  if (fetchError) return <Error error={fetchError} />;
 
-  render() {
-    this.contextInfo = this.context;
-    let { article, error } = this.state;
-    if (error) return <Error error={error} />;
-    if (!article) return <Loading />;
-    return (
-      <div className=''>
-        <section id='single-art-hero'>
-          <div className='container'>
-            <h1 className='hero-heading single-art-heading'>{article.title}</h1>
-            <div className='flex gap-2 align-center'>
-              <div className='img-author-holder padd-1 flex gap-half align-center'>
-                <img
-                  className='author-img'
-                  src={article.author.image}
-                  alt={article.author.username || 'user-img'}
-                />
-                <div className=''>
-                  <Link to={`/profile/${article.author.username}`}>
-                    <h3 className='author-name author-single-art'>
-                      {article.author.username}
-                    </h3>
-                  </Link>
-                  <span className='date'>
-                    {this.updatedDate(article.updatedAt)}
-                  </span>
-                </div>
-              </div>
-              {this.contextInfo.user &&
-              this.state.article.author.username ===
-                this.contextInfo.user.username ? (
-                <div>
-                  <button
-                    onClick={this.handleEdit}
-                    className='edit-article pointer'
-                  >
-                    <i className='ion-edit'></i>
-                    Edit Article
-                  </button>
-                  <button
-                    onClick={this.handleDeleteArticle}
-                    className='delete-article pointer'
-                  >
-                    <i className='ion-trash-a'></i>
-                    Delete Article
-                  </button>
-                </div>
-              ) : (
-                ''
-              )}
-            </div>
-          </div>
-        </section>
+  if (isLoading) return <Loading />;
+
+  return (
+    <div className=''>
+      <section id='single-art-hero'>
         <div className='container'>
-          <section className='single-art-holder'>
-            <p className='single-art-description'>{article.body}</p>
-            <ul className='flex gap-half'>
-              {article.tagList.map((tag) => {
-                return (
-                  <li className='single-art-tag' key={tag}>
-                    {tag}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        </div>
-        <section className='comment-section'>
-          <div className='container'>
-            {!this.contextInfo.isUserLoggedIn ? (
-              <p className='padd-1'>
-                <Link to='/login'>Sign in</Link> or{' '}
-                <Link to='/register'>Sign up</Link> to add comments on this
-                article
-              </p>
+          <h1 className='hero-heading single-art-heading'>{article.title}</h1>
+          <div className='flex gap-2 align-center'>
+            <div className='img-author-holder padd-1 flex gap-half align-center'>
+              <img
+                className='author-img'
+                src={article.author.image}
+                alt={article.author.username || 'user-img'}
+              />
+              <div className=''>
+                <Link to={`/profile/${article.author.username}`}>
+                  <h3 className='author-name'>{article.author.username}</h3>
+                </Link>
+                <span className='date single-art-date '>
+                  {updatedDate(article.updatedAt)}
+                </span>
+              </div>
+            </div>
+            {contextInfo.user &&
+            article.author.username === contextInfo.user.username ? (
+              <div className='flex gap-2'>
+                <button onClick={handleEdit} className='edit-article pointer'>
+                  <i className='ion-edit'></i>
+                  Edit Article
+                </button>
+                <button
+                  onClick={handleDeleteArticle}
+                  className='delete-article pointer'
+                >
+                  <i className='ion-trash-a'></i>
+                  Delete Article
+                </button>
+              </div>
             ) : (
-              <Comment user={this.contextInfo.user} slug={article.slug} />
+              ''
             )}
           </div>
+        </div>
+      </section>
+      <div className='container'>
+        <section className='single-art-holder'>
+          <p className='single-art-description'>{article.body}</p>
+          <ul className='flex gap-half'>
+            {article.tagList.map((tag) => {
+              return (
+                <li className='tag test single-art-tag' key={tag}>
+                  {tag}
+                </li>
+              );
+            })}
+          </ul>
         </section>
       </div>
-    );
-  }
+      <section className='comment-section'>
+        <div className='container'>
+          {!contextInfo.isUserLoggedIn ? (
+            <p className='padd-1'>
+              <Link to='/login'>Sign in</Link> or{' '}
+              <Link to='/register'>Sign up</Link> to add comments on this
+              article
+            </p>
+          ) : (
+            <Comment user={contextInfo.user} slug={article.slug} />
+          )}
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default withRouter(SingleArticle);

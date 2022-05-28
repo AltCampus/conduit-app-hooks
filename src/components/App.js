@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 
 import Header from './Header';
@@ -11,94 +11,99 @@ import SingleArticle from './SingleArticle';
 import FullPageSppiner from './fullPageSpinner';
 import Settings from './Settings';
 import Profile from './Profile';
-import Error from './Error';
 import UpdatePost from './UpdatePost';
 import { localStorageKey, userVerifyURL } from '../utils/constant';
 import LoginUserContext from '../ContextAPI/LoginUserContext';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import useFetch from '../customHooks/useFetch';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isUserLoggedIn: false,
-      user: null,
-      isVerifying: true,
-      error: '',
-    };
-  }
+function App(props) {
+  let initialInfo = {
+    isUserLoggedIn: false,
+    user: null,
+    isVerifying: true,
+    error: '',
+  };
 
-  componentDidMount() {
-    let storageKey = localStorage[localStorageKey];
-    if (storageKey) {
-      fetch(userVerifyURL, {
-        method: 'GET',
-        headers: {
-          authorization: `Token ${storageKey}`,
-        },
-      })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-          return res.json().then(({ errors }) => {
-            return Promise.reject(errors);
-          });
-        })
-        .then(({ user }) => this.updateUser(user))
-        .catch((error) => this.setState({ error }));
+  const [userInfo, setUserInfo] = useState(initialInfo);
+
+  let { makeApiCall, isLoading } = useFetch();
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    let response = await makeApiCall(userVerifyURL, 'GET');
+    if (response && response.user) {
+      setUserInfo({
+        ...userInfo,
+        isUserLoggedIn: true,
+        isVarifying: false,
+        user: response.user,
+      });
     } else {
-      this.setState({ isVerifying: false });
+      setUserInfo({
+        ...userInfo,
+        isUserLoggedIn: false,
+        isVarifying: false,
+        user: null,
+      });
     }
-  }
+  };
 
-  updateUser = (user) => {
-    this.setState({ isUserLoggedIn: true, user, isVerifying: false });
+  const updateUser = (user) => {
+    setUserInfo({
+      ...userInfo,
+      isUserLoggedIn: true,
+      user,
+      isVerifying: false,
+    });
     localStorage.setItem(localStorageKey, user.token);
   };
 
-  logoutUser = () => {
-    this.setState({ isUserLoggedIn: false, user: null, isVerifying: false });
+  const logoutUser = () => {
+    setUserInfo({
+      ...userInfo,
+      isUserLoggedIn: false,
+      user: null,
+      isVerifying: false,
+    });
     localStorage.removeItem(localStorageKey);
-    this.props.history.push('/');
+    props.history.push('/');
   };
 
-  render() {
-    if (this.state.error) {
-      return <Error error={this.state.error} />;
-    }
-
-    if (this.state.isVerifying) {
-      return <FullPageSppiner />;
-    }
-    let { isUserLoggedIn, user } = this.state;
-    let contextInfo = { isUserLoggedIn, user, updateUser: this.updateUser };
-
-    return (
-      <>
-        <React.StrictMode>
-          <ErrorBoundary>
-            <LoginUserContext.Provider value={contextInfo}>
-              <Header />
-              {isUserLoggedIn ? (
-                <AuthenticatedApp
-                  logoutUser={this.logoutUser}
-                  updateArticle={this.updateArticle}
-                  article={this.state.article}
-                  updateUser={this.updateUser}
-                />
-              ) : (
-                <UnAuthenticatedApp
-                  updateUser={this.updateUser}
-                  article={this.state.article}
-                />
-              )}
-            </LoginUserContext.Provider>
-          </ErrorBoundary>
-        </React.StrictMode>
-      </>
-    );
+  if (isLoading) {
+    return <FullPageSppiner />;
   }
+
+  let { isUserLoggedIn, user } = userInfo;
+
+  let contextInfo = { isUserLoggedIn, user, updateUser: updateUser };
+
+  return (
+    <>
+      <React.StrictMode>
+        <ErrorBoundary>
+          <LoginUserContext.Provider value={contextInfo}>
+            <Header />
+            {isUserLoggedIn ? (
+              <AuthenticatedApp
+                logoutUser={logoutUser}
+                article={userInfo.article}
+                updateUser={updateUser}
+              />
+            ) : (
+              <UnAuthenticatedApp
+                updateUser={updateUser}
+                article={userInfo.article}
+              />
+            )}
+          </LoginUserContext.Provider>
+        </ErrorBoundary>
+      </React.StrictMode>
+    </>
+  );
 }
 
 function AuthenticatedApp(props) {

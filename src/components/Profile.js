@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiPlusMedical } from 'react-icons/bi';
@@ -10,194 +10,113 @@ import Pagination from './Pagination';
 import Error from './Error';
 import { articlesURL, getProfile, singleArticleURL } from '../utils/constant';
 import LoginUserContext from '../ContextAPI/LoginUserContext';
+import useFetch from '../customHooks/useFetch';
 
-class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      articles: null,
-      articlesCount: 0,
-      articlesPerPage: 10,
-      activePageIndex: 1,
-      feedSelected: 'author',
-      error: '',
-      profile: null,
-    };
-    this.contextInfo = null;
-  }
-
-  handleFeedSelected = (val) => {
-    this.setState({ feedSelected: val });
+function Profile(props) {
+  let initialArticle = {
+    articles: [],
+    articlesCount: 0,
+    articlesPerPage: 10,
+    activePageIndex: 1,
+    feedSelected: 'author',
+    error: '',
   };
 
-  componentDidMount() {
-    this.getUser();
-  }
+  const [articlesInfo, setArticlesInfo] = useState(initialArticle);
+  const [profileInfo, setProfileInfo] = useState(null);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.feedSelected !== this.state.feedSelected) {
-      this.getArticles();
-    }
-    if (prevProps.match.params.username !== this.props.match.params.username) {
-      this.setState({ feedSelected: 'author' }, () => {
-        this.getUser();
-      });
-    }
-  }
+  let contextInfo = useContext(LoginUserContext);
 
-  getUser = () => {
-    let user = this.props.match.params;
-    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
-    fetch(getProfile + user.username, {
-      method: 'GET',
-      headers: {
-        Authorization: `Token ${token}`,
-        'Content-type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Profile couldnot fetched');
-        }
-        return res.json();
-      })
-      .then(({ profile }) => {
-        this.setState({ profile });
-        this.getArticles();
-      })
-      .catch((error) => {
-        this.setState({ error: error.props });
-      });
+  let { makeApiCall, isLoading, error } = useFetch();
+
+  useEffect(() => {
+    let user = props.match.params;
+
+    fetchUser(getProfile + user.username, 'GET');
+  }, [props]);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [articlesInfo.feedSelected, articlesInfo.activePageIndex, props]);
+
+  const fetchUser = async (url, method) => {
+    let data = await makeApiCall(url, method);
+    setProfileInfo(data.profile);
   };
 
-  getArticles = () => {
-    let limit = this.state.articlesPerPage;
-    let offset = (this.state.activePageIndex - 1) * 10;
-    let user = this.props.match.params;
-    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
-    fetch(
-      `${articlesURL}?${this.state.feedSelected}=${user.username}&offset=${offset}&limit=${limit}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Token ${token}`,
-          'Content-type': 'application/json',
-        },
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        this.setState({
-          articles: data.articles,
-          articlesCount: data.articlesCount,
-          error: '',
-        });
-      })
-      .catch((error) => {
-        this.setState({ error: error.props });
-      });
-  };
-
-  updateCurrentPageIndex = (val) => {
-    this.setState({ activePageIndex: val }, this.getArticles);
-  };
-
-  followUser = (val) => {
-    let profile = this.state.profile;
-    let token = this.contextInfo.user.token;
-    fetch(`${getProfile}${profile.username}/follow`, {
-      method: val,
-      headers: {
-        Authorization: `Token ${token}`,
-        'Content-type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Profile couldnot fetched');
-        }
-        return res.json();
-      })
-      .then(({ profile }) => {
-        this.setState({ profile });
-      })
-      .catch((error) => this.setState({ error }));
-  };
-
-  likeArticle = (favourted, slug) => {
-    let isUserLoggedIn = this.contextInfo.isUserLoggedIn;
-    let method = favourted === true ? 'DELETE' : 'POST';
-    let token = this.contextInfo.user ? this.contextInfo.user.token : '';
-    if (isUserLoggedIn) {
-      fetch(`${singleArticleURL}/${slug}/favorite`, {
-        method: method,
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            return res.json().then(({ errors }) => {
-              return Promise.reject(errors);
-            });
-          }
-          return res.json();
-        })
-        .then(({ article }) => {
-          if (this.state.feedSelected === 'myFeed') {
-            this.myFeed();
-          } else {
-            this.getArticles();
-          }
-        })
-        .catch((error) => this.setState({ error }));
-    }
-  };
-
-  static contextType = LoginUserContext;
-
-  render() {
-    this.contextInfo = this.context;
-
-    let { articlesCount, articlesPerPage, activePageIndex } = this.state;
-    if (this.state.error) return <Error error={this.state.error} />;
-    return (
-      <div className='profile-holder'>
-        <Banner
-          profile={this.state.profile}
-          user={this.contextInfo.user}
-          unfollowUser={this.unfollowUser}
-          followUser={this.followUser}
-        />
-        <div className='container'>
-          <ProfileFeedNav
-            feedSelected={this.state.feedSelected}
-            handleFeedSelected={this.handleFeedSelected}
-          />
-          <Posts
-            articles={this.state.articles}
-            user={this.contextInfo.user}
-            likeArticle={this.likeArticle}
-          />
-          {this.state.articlesCount > 10 ? (
-            <Pagination
-              articlesCount={articlesCount}
-              articlesPerPage={articlesPerPage}
-              activePageIndex={activePageIndex}
-              updateCurrentPageIndex={this.updateCurrentPageIndex}
-            />
-          ) : (
-            ''
-          )}
-        </div>
-      </div>
+  const fetchArticles = async () => {
+    let user = props.match.params;
+    let limit = articlesInfo.articlesPerPage;
+    let offset = (articlesInfo.activePageIndex - 1) * 10;
+    let data = await makeApiCall(
+      `${articlesURL}?${articlesInfo.feedSelected}=${user.username}&offset=${offset}&limit=${limit}`,
+      'GET'
     );
-  }
+    setArticlesInfo({
+      ...articlesInfo,
+      articles: data.articles,
+      articlesCount: data.articlesCount,
+      error: '',
+    });
+  };
+
+  const handleFeedSelected = (val) => {
+    setArticlesInfo({ ...articlesInfo, feedSelected: val });
+  };
+
+  const updateCurrentPageIndex = (val) => {
+    setArticlesInfo({ ...articlesInfo, activePageIndex: val });
+  };
+
+  const followUser = (val) => {
+    if (contextInfo.isUserLoggedIn) {
+      fetchUser(`${getProfile}${profileInfo.username}/follow`, val);
+    }
+  };
+
+  const likeArticle = async (favourted, slug) => {
+    let isUserLoggedIn = contextInfo.isUserLoggedIn;
+    let method = favourted === true ? 'DELETE' : 'POST';
+    if (isUserLoggedIn) {
+      await makeApiCall(`${singleArticleURL}/${slug}/favorite`, method);
+
+      fetchArticles();
+    }
+  };
+
+  let { articlesCount, articlesPerPage, activePageIndex } = articlesInfo;
+  if (error || articlesInfo.error) return <Error error={error} />;
+  if (isLoading) return <Loading />;
+  return (
+    <div className='profile-holder'>
+      <Banner
+        profile={profileInfo}
+        user={contextInfo.user}
+        followUser={followUser}
+      />
+      <div className='container'>
+        <ProfileFeedNav
+          feedSelected={articlesInfo.feedSelected}
+          handleFeedSelected={handleFeedSelected}
+        />
+        <Posts
+          articles={articlesInfo.articles}
+          user={contextInfo.user}
+          likeArticle={likeArticle}
+        />
+        {articlesInfo.articlesCount > 10 ? (
+          <Pagination
+            articlesCount={articlesCount}
+            articlesPerPage={articlesPerPage}
+            activePageIndex={activePageIndex}
+            updateCurrentPageIndex={updateCurrentPageIndex}
+          />
+        ) : (
+          ''
+        )}
+      </div>
+    </div>
+  );
 }
 
 function Banner(props) {
@@ -219,7 +138,7 @@ function Banner(props) {
         !props.profile.following ? (
           <button
             onClick={() => props.followUser('POST')}
-            className='follow-user flex align-center'
+            className='follow-user flex align-center '
           >
             <BiPlusMedical />
             Follow user
@@ -235,9 +154,9 @@ function Banner(props) {
         )
       ) : (
         <Link to='/setting'>
-          <button className='follow-user flex align-center'>
+          <button className='follow-user flex align-center user-setting'>
             <AiFillSetting className='setting-icon' />
-            User Info Settings
+            Profile Settings
           </button>
         </Link>
       )}
